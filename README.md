@@ -5,10 +5,10 @@ Cloudsmith EPM Rego samples
 
 |           Name              |                                        Description                                                              |
 |         --------            |                                          -------                                                                |
-| Enforcing Signed Packages   | This policy enforces mandatory GPG/DSA signature checks on packages during their sync/import into Cloudsmith    |
-| Restriction Based on Tags   | This policy checks whether a package includes specific "maven-central" tags and marks it as match if present    |
-| Copy-Left licensing Match   | This policy is designed to detect a broad range of copyleft licenses, including free-text and SPDX variants     |
-| Limiting Package Size - WIP | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |
+| [Enforcing Signed Packages](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-1---enforcing-signed-packages)   | This policy enforces mandatory ```GPG/DSA signature``` checks on packages during their sync/import into Cloudsmith    |
+| [Restriction Based on Tags](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-2---restricting-package-based-on-tags)   | This policy checks whether a package includes specific ```deprecated``` tag and marks it as match if present    |
+| Copy-Left licensing         | This policy is designed to detect a broad range of copyleft licenses, including free-text and SPDX variants     |
+| Limiting Package Size       | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |
 | Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |
 | CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |
 | Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |
