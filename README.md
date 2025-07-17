@@ -1,5 +1,15 @@
-# rego-recipes
-Cloudsmith EPM Rego samples
+# Cloudsmith EPM Recipes
+A curated collection of Enterprise Policy Management (EPM) recipes for Cloudsmith - combining practical OPA Rego policy samples, action configurations, and testing guides to help you define, simulate, and enforce package lifecycle rules across your repositories.
+<br/><br/>
+This repository includes:
+- Rego policies tailored for Cloudsmith’s EPM engine, using the supported input schema and policy format.
+- Policy action configurations (```SetPackageState```, ```AddPackageTags```, etc.) with examples showing how to order and associate them by precedence.
+- Simulation and deployment instructions using Cloudsmith’s API, including how to safely test policies before enforcement.
+- Helper scripts and workflows to automate policy testing and promotion.
+
+These recipes are designed to be modular, auditable, and production-ready - with a strong emphasis on policy-as-code best practices.
+
+***
 
 ### Table of Rego Samples
 
@@ -18,7 +28,7 @@ Cloudsmith EPM Rego samples
 | Enforce Consistent Filename | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |
 
 
-
+***
 
 ### Recipe 1 - Enforcing Signed Packages
 This policy enforces mandatory GPG/DSA signature checks on packages during their sync/import into Cloudsmith <br/>
@@ -52,6 +62,7 @@ python3 -m build  # produces dist/dummy_unsigned-0.0.1.tar.gz
 cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO dist/dummy_unsigned-0.0.1.tar.gz -k "$CLOUDSMITH_API_KEY"
 ```
 
+***
 
 ### Recipe 2 - Restricting Package Based on Tags
 This policy checks whether a package includes a specific ```deprecated``` tag and marks it as a match if it does.
@@ -76,3 +87,5 @@ Once ready, download a random package, in this case a python package called ```h
 pip download h11==0.14.0
 cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"  --tags deprecated
 ```
+
+***
