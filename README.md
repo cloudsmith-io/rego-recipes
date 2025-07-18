@@ -18,7 +18,7 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Enforcing Signed Packages](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-1---enforcing-signed-packages)   | This policy enforces mandatory ```GPG/DSA signature``` checks on packages during their sync/import into Cloudsmith    |
 | [Restriction Based on Tags](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-2---restricting-package-based-on-tags)   | This policy checks whether a package includes specific ```deprecated``` tag and marks it as match if present    |
 | Copy-Left licensing         | This policy is designed to detect a broad range of copyleft licenses, including free-text and SPDX variants     |
-| Quarantine Debug Builds     | Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns     |
+| [Quarantine Debug Builds](https://github.com/cloudsmith-io/rego-recipes/blob/main/README.md#recipe-4---restricting-package-based-on-tags)     | Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns     |
 | Limiting Package Size       | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |
 | Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |
 | CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |
