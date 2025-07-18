@@ -18,11 +18,11 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Enforcing Signed Packages](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-1---enforcing-signed-packages)   | This policy enforces mandatory ```GPG/DSA signature``` checks on packages during their sync/import into Cloudsmith    |
 | [Restriction Based on Tags](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-2---restricting-package-based-on-tags)   | This policy checks whether a package includes specific ```deprecated``` tag and marks it as match if present    |
 | Copy-Left licensing         | This policy is designed to detect a broad range of copyleft licenses, including free-text and SPDX variants     |
+| Quarantine Debug Builds     | Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns     |
 | Limiting Package Size       | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |
 | Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |
 | CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |
 | Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |
-| Quarantine Debug Builds     | Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns     |
 | Limit Tag Sprawl            | Flag any packages that have more than a threshold number of tags to avoid ungoverned tagging behaviours         |
 | Enforce Consistent Filename | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |
 | Enforce Consistent Filename | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |
@@ -86,6 +86,32 @@ Once ready, download a random package, in this case a python package called ```h
 ```
 pip download h11==0.14.0
 cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"  --tags deprecated
+```
+
+***
+
+### Recipe 4 - Restricting Package Based on Tags
+This policy checks whether a package includes specific ```debug```, ```test```, or ```temp``` descriptors in the filename.
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-4/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Quarantine Debug Builds",
+  "description": "Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 4
+}
+EOF
+```
+
+Once ready, download ```debugpy``` Python package and push it to Cloudsmith to cause the policy violation:
+```
+pip download --no-deps --dest . debugpy 
+&& cloudsmith push python acme-corporation/acme-repo-one debugpy-1.8.14-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 ***
