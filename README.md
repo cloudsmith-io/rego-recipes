@@ -13,19 +13,18 @@ These recipes are designed to be modular, auditable, and production-ready - with
 
 ### Table of Rego Samples
 
-|           Name              |                                        Description                                                              |
-|         --------            |                                          -------                                                                |
-| [Enforcing Signed Packages](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-1---enforcing-signed-packages)   | This policy enforces mandatory ```GPG/DSA signature``` checks on packages during their sync/import into Cloudsmith    |
-| [Restriction Based on Tags](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-2---restricting-package-based-on-tags)   | This policy checks whether a package includes specific ```deprecated``` tag and marks it as match if present    |
-| Copy-Left licensing         | This policy is designed to detect a broad range of copyleft licenses, including free-text and SPDX variants     |
-| [Quarantine Debug Builds](https://github.com/cloudsmith-io/rego-recipes/blob/main/README.md#recipe-4---restricting-package-based-on-tags)     | Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns     |
-| Limit Tag Sprawl            | Flag any packages that have more than a threshold number of tags to avoid ungoverned tagging behaviours         |
-| Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |
-| Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |
-| CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |
-| Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |
-| Enforce Consistent Filename | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |
-| Enforce Consistent Filename | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |
+|           Name              |                                        Description                                                              |  Rego Playground |
+|         --------            |                                          -------                                                                |      -------     |
+| [Enforcing Signed Packages](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-1---enforcing-signed-packages)   | This policy enforces mandatory ```GPG/DSA signature``` checks on packages during their sync/import into Cloudsmith    |  Link  |
+| [Restriction Based on Tags](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-2---restricting-package-based-on-tags)   | This policy checks whether a package includes specific ```deprecated``` tag and marks it as match if present    |  Link  |
+| Copy-Left licensing         | This policy is designed to detect a broad range of copyleft licenses, including free-text and SPDX variants     |  Link  |
+| [Quarantine Debug Builds](https://github.com/cloudsmith-io/rego-recipes/blob/main/README.md#recipe-4---restricting-package-based-on-tags)     | Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns     |  Link  |
+| [Limit Tag Sprawl](https://github.com/cloudsmith-io/rego-recipes/blob/main/README.md#recipe-5---restricting-package-based-on-tags)            | Flag any packages that have more than a threshold number of tags to avoid ungoverned tagging behaviours         |  Link  |
+| Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |  Link  |
+| Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |  [Link](https://play.openpolicyagent.org/p/dHSTerY2jn)  |
+| CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |  Link  |
+| Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
+| Enforce Consistent Filename | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |  Link  |
 
 
 ***
@@ -116,7 +115,7 @@ pip download --no-deps --dest . debugpy
 
 ***
 
-### Recipe 5 - Restricting Package Based on Tags
+### Recipe 5 - Limit Tag Sprawl
 This policy checks whether a package already includes ```5``` or more assigned tags - conidered as sprawl by some orgs.
 Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
 ```
