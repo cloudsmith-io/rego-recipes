@@ -19,11 +19,11 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Restriction Based on Tags](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-2---restricting-package-based-on-tags)   | This policy checks whether a package includes specific ```deprecated``` tag and marks it as match if present    |
 | Copy-Left licensing         | This policy is designed to detect a broad range of copyleft licenses, including free-text and SPDX variants     |
 | [Quarantine Debug Builds](https://github.com/cloudsmith-io/rego-recipes/blob/main/README.md#recipe-4---restricting-package-based-on-tags)     | Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns     |
-| Limiting Package Size       | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |
+| Limit Tag Sprawl            | Flag any packages that have more than a threshold number of tags to avoid ungoverned tagging behaviours         |
+| Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |
 | Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |
 | CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |
 | Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |
-| Limit Tag Sprawl            | Flag any packages that have more than a threshold number of tags to avoid ungoverned tagging behaviours         |
 | Enforce Consistent Filename | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |
 | Enforce Consistent Filename | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |
 
@@ -114,4 +114,29 @@ pip download --no-deps --dest . debugpy
 && cloudsmith push python acme-corporation/acme-repo-one debugpy-1.8.14-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
+***
+
+### Recipe 5 - Restricting Package Based on Tags
+This policy checks whether a package already includes ```5``` or more assigned tags - conidered as sprawl by some orgs.
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-5/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Limit Tag Sprawl",
+  "description": "Flag packages that have more than a threshold number of tags to avoid ungoverned tagging behaviours.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 2
+}
+EOF
+```
+
+Once ready, download ```transformers``` Python and assign it ```5 tags``` during the Cloudsmith push process to cause the policy violation:
+```
+pip download transformers --no-deps
+cloudsmith push python acme-corporation/acme-repo-one transformers-4.53.1-py3-none-any.whl -k "$CLOUDSMITH_API_KEY" --tags TAG1,TAG2,TAG3,TAG4,TAG5
+```
 ***
