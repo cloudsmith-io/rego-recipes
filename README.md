@@ -27,6 +27,7 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |  Link  |
 | [Architecture allow list](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-11---architecture-specific-allow-list)      | Policy that only allows ```amd64``` architecture packages and blocks others like arm64.          |  [Link](https://play.openpolicyagent.org/p/bmVtmxYysJ)  |
 | [Block package if version over 0.16.0](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-12---block-package-xyz-if-version--0160)  | ```semver.compare(pkg.version, "0.16.0") == -1``` should check if the version is less than ```0.16.0``` using semver-aware comparison.     |  Link  |
+| [Block package if version uner 1.0.0](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-13---match-versions-less-than-100-such-as-0140)  | Cloudsmith's EPM currently does not support Rego's semver functions because those require a Rego SDK integration, which Cloudsmith doesn't provide at the moment. This means version comparison must be done via string comparison, which only works safely for zero-padded numeric versions or very simple SemVer patterns. If your versions are formatted like "1.2.3" without pre-release/build tags, you can sometimes get away with lexicographical comparisons.     |  Link  |
 | Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |  Link  |
 | Not even sure what this is      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/azphiCM3pz)  |
 | Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
@@ -264,7 +265,6 @@ pip download h11==0.14.0
 cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
-
 ***
 
 
@@ -350,6 +350,9 @@ EOF
 pip download h11==0.14.0
 cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
+
+<img width="1492" height="433" alt="Screenshot 2025-07-28 at 13 57 54" src="https://github.com/user-attachments/assets/ff3e5776-6d2c-47d9-b561-1da9c45bf59c" />
+
 
 Alternatively, here’s a simple (but fragile) example using string comparison:
 
