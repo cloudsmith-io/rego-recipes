@@ -21,8 +21,8 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Quarantine Debug Builds](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-4---restricting-package-based-on-tags)     | Identify and quarantine packages that look like debug/test artifacts based on filename or metadata patterns     |  Link  |
 | [Limit Tag Sprawl](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-5---limit-tag-sprawl)            | Flag any packages that have more than a threshold number of tags to avoid ungoverned tagging behaviours         |  Link  |
 | [Enforce Consistent Filename](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-6---enforce-consistent-filename-convention) | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |  Link  |
+| [Approved Upstreams based on Tags](cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#)      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/1cBxdKbgYb)  |
 | Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |  Link  |
-| Approved Upstreams based on Tags      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/1cBxdKbgYb)  |
 | CVSS Policy with Fix Available      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/aBZ7foSYWR)  |
 | Not even sure what this is      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/azphiCM3pz)  |
 | Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |  [Link](https://play.openpolicyagent.org/p/dHSTerY2jn)  |
