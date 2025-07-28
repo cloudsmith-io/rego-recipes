@@ -299,4 +299,31 @@ cloudsmith push python acme-corporation/acme-repo-one numpy-1.24.4-cp38-cp38-man
 - ```--only-binary=:all:```: avoid source dist, force binary wheel
 - ```--python-version 38``` and ```--abi cp38```: simulate Python 3.8 CPython ABI
 
+<img width="995" height="696" alt="Screenshot 2025-07-28 at 11 26 50" src="https://github.com/user-attachments/assets/cd654f84-3fc9-4cfd-a222-3c4d0f13e22e" />
+
+
 ***
+
+
+### Recipe 12 - Block Package XYZ if version < 2.7.0”
+This policy matches any ```h11``` packages with a version older than ```0.16.0```:
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-11/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Forced Upgrade of Package Versions",
+  "description": "Forces teams to periodically upgrade versions of certain package dependencies, so they don't fall too far behind.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 12
+}
+EOF
+```
+
+```
+pip download h11==0.14.0
+cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+```
