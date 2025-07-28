@@ -24,9 +24,10 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Approved Upstreams based on Tags](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-7---approved-upstreams-based-on-tags)      | Only packages from explicitly approved upstream sources are permitted, helping to prevent the propagation of unvetted or insecure dependencies.   |  [Link](https://play.openpolicyagent.org/p/1cBxdKbgYb)  |
 | [CVSS Policy with Fix Available](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-8---cvss-with-fix-available)      | Match packages in a specific repo that have high/critical fixed vulnerabilities, excluding specific known CVEs.    |  [Link](https://play.openpolicyagent.org/p/aBZ7foSYWR)  |
 | [Time-Based CVSS Policy](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-9---time-based-cvss-policy)      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |  [Link](https://play.openpolicyagent.org/p/dHSTerY2jn)  |
+| CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |  Link  |
+| Architecture-specific allow list      | Policy that only allows amd64 architecture packages and blocks others like arm64.          |  Link  |
 | Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |  Link  |
 | Not even sure what this is      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/azphiCM3pz)  |
-| CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |  Link  |
 | Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
 
 
@@ -262,5 +263,40 @@ pip download h11==0.14.0
 cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
+
+***
+
+
+### Recipe 11 - Architecture-specific allow list
+This policy only allows ```amd64``` architecture packages and blocks others like ```arm64```.
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-11/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Architecture-specific allow list",
+  "description": "Policy that only allows amd64 architecture packages and blocks others like arm64",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 11
+}
+EOF
+```
+
+To trigger the above policy (which blocks all architectures <b>except</b> ```amd64```), you'd want to upload or sync a Python package that is built for a ```non-amd64``` architecture - like ```arm64```.
+<br/><br/>
+However, pip by default fetches packages built for your local system architecture, so you typically won't download architecture-specific wheels unless they're explicitly tagged.
+<br/><br/>
+Here's a command to download a known Python package with an ARM-specific wheel using pip download:
+```
+pip download numpy --platform manylinux2014_aarch64 --only-binary=:all: --python-version 38 --implementation cp --abi cp38
+cloudsmith push python acme-corporation/acme-repo-one numpy-1.24.4-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl -k "$CLOUDSMITH_API_KEY"
+```
+
+- ```--platform manylinux2014_aarch64```: targets ```arm64``` (```aarch64```)
+- ```--only-binary=:all:```: avoid source dist, force binary wheel
+- ```--python-version 38``` and ```--abi cp38```: simulate Python 3.8 CPython ABI
 
 ***
