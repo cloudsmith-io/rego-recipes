@@ -6,7 +6,7 @@ default match := false
 max_cvss_score := 7
 
 # targeted repository
-target_repository := "acme-repo1"
+target_repository := "acme-repo-one"
 
 # CVEs to ignore
 ignored_cves := {"CVE-2023-45853"}
@@ -14,7 +14,9 @@ ignored_cves := {"CVE-2023-45853"}
 # Main match condition
 match if {
 	input.v0.repository.name == target_repository
-	some vulnerability in input.v0.security_scan.Vulnerabilities
+	# some vulnerability in input.v0.security_scan.Vulnerabilities (deprecated)
+    	some target in input.v0.security_scan
+    	some vulnerability in target.Vulnerabilities
 	vulnerability.FixedVersion
 	vulnerability.Status == "fixed"
 	not ignored_cve(vulnerability)
