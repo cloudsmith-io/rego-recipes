@@ -165,8 +165,8 @@ EOF
 A straightforward way to test this policy is to take a package that already has a valid SemVer-compliant filename and rename it by replacing the version number with a placeholder like ```test```:
 
 ```
-pip download h11==0.14.0 && mv h11-*.whl "h11-test.whl"
-cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-test.whl -k "$CLOUDSMITH_API_KEY"
+pip download h11==0.14.0
+cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 ***
@@ -195,3 +195,40 @@ If a package has ```approved``` --> blocked (<b>even if upstream is present</b>)
 
 
 ***
+
+### Recipe 8 - CVSS with Fix Available
+This policy is designed to match packages in a specific repository (```acme-repo-one```) that have ```high``` or ```critical``` with a ```Fixed version available```, excluding specific ```known CVEs```. 
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-8/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Approved Upstreams based on Tags",
+  "description": "Matched packages from a specific repository that have high or critical vulnerabilities that can be patched.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 8
+}
+EOF
+```
+
+To demonstrate this policy, you can use the ```requests``` Python package, which has a known vulnerability with a high CVSS score.
+<br/><br/>
+<b>Vulnerability Details:</b>
+<br/>
+- <b>Package:</b>  h11
+- <b>Affected Version:</b> 0.14.0
+- <b>Fixed In:</b> 0.16.0
+- <b>CVE Identifier:</b>  [CVE-2025-43859](https://access.redhat.com/security/cve/cve-2025-43859)
+- <b>CVSS Context:</b> This CVE record has been marked for NVD enrichment efforts.
+- <b>Description:</b> An HTTP request smuggling vulnerability in python-h11.
+
+```
+pip download h11==0.14.0
+cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+```
+
+***
+
