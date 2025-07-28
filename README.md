@@ -23,9 +23,9 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Enforce Consistent Filename](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-6---enforce-consistent-filename-convention) | Validate whether the filename convention matches a semantic or naming pattern via Regular Expressions           |  [Link](https://play.openpolicyagent.org/p/g_YjIwNzZhMzYwNzU5OGE1NmE5ZTk2OWUwYjYwZjVkZmRfog2dl4QYeaXGZWOE7ZBna4dFC70)  |
 | [Approved Upstreams based on Tags](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-7---approved-upstreams-based-on-tags)      | Only packages from explicitly approved upstream sources are permitted, helping to prevent the propagation of unvetted or insecure dependencies.   |  [Link](https://play.openpolicyagent.org/p/1cBxdKbgYb)  |
 | [CVSS Policy with Fix Available](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-8---cvss-with-fix-available)      | Match packages in a specific repo that have high/critical fixed vulnerabilities, excluding specific known CVEs.    |  [Link](https://play.openpolicyagent.org/p/aBZ7foSYWR)  |
+| Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |  [Link](https://play.openpolicyagent.org/p/dHSTerY2jn)  |
 | Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |  Link  |
 | Not even sure what this is      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/azphiCM3pz)  |
-| Time-Based CVSS Policy      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |  [Link](https://play.openpolicyagent.org/p/dHSTerY2jn)  |
 | CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |  Link  |
 | Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
 
@@ -204,7 +204,7 @@ wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/mai
 escaped_policy=$(jq -Rs . < policy.rego)
 cat <<EOF > payload.json
 {
-  "name": "Approved Upstreams based on Tags",
+  "name": "CVSS with Fix Available",
   "description": "Matched packages from a specific repository that have high or critical vulnerabilities that can be patched.",
   "rego": $escaped_policy,
   "enabled": true,
@@ -237,3 +237,30 @@ You'll probably want to enable a [Quarantine](https://help.cloudsmith.io/docs/pa
 
 ***
 
+### Recipe 9 - Time-based CVSS Policy
+This policy is designed to detect and flag packages in a specific repo that contain serious, outdated, but fixed vulnerabilities.
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-9/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Time-based CVSS policy",
+  "description": "Only matches if the vulnerability was published more than 30 days ago.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 9
+}
+EOF
+```
+
+This CVE was published on ...
+
+```
+pip download h11==0.14.0
+cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+```
+
+
+***
