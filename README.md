@@ -230,5 +230,10 @@ pip download h11==0.14.0
 cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
+You'll probably want to enable a [Quarantine](https://help.cloudsmith.io/docs/package-quarantine) action for policies dealing with critical vulnerabilities that can be fixed:
+
+<img width="965" height="202" alt="Screenshot 2025-07-28 at 10 28 21" src="https://github.com/user-attachments/assets/85f34bd8-247f-4cef-b7e0-93507b60cf48" />
+
+
 ***
 
