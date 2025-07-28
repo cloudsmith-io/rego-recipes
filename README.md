@@ -26,6 +26,7 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Time-Based CVSS Policy](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-9---time-based-cvss-policy)      | Evaluate CVEs older than 30 days. Checks CVSS threshold ≥ 7. Filters for a specific repo. Ignores certain CVE   |  [Link](https://play.openpolicyagent.org/p/dHSTerY2jn)  |
 | CVSS with EPSS context      | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold.          |  Link  |
 | [Architecture allow list](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-11---architecture-specific-allow-list)      | Policy that only allows amd64 architecture packages and blocks others like arm64.          |  [Link](https://play.openpolicyagent.org/p/bmVtmxYysJ)  |
+| [Block package if version over 0.16.0](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-12---block-package-xyz-if-version--270)  | ```semver.compare(pkg.version, "0.16.0") == -1``` should check if the version is less than ```0.16.0``` using semver-aware comparison.     |  Link  |
 | Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |  Link  |
 | Not even sure what this is      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/azphiCM3pz)  |
 | Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
@@ -305,11 +306,11 @@ cloudsmith push python acme-corporation/acme-repo-one numpy-1.24.4-cp38-cp38-man
 ***
 
 
-### Recipe 12 - Block Package XYZ if version < 2.7.0”
+### Recipe 12 - Block Package XYZ if version < 0.16.0”
 This policy matches any ```h11``` packages with a version older than ```0.16.0```:
 Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
 ```
-wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-11/policy.rego
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-12/policy.rego
 escaped_policy=$(jq -Rs . < policy.rego)
 cat <<EOF > payload.json
 {
