@@ -306,8 +306,8 @@ cloudsmith push python acme-corporation/acme-repo-one numpy-1.24.4-cp38-cp38-man
 ***
 
 
-### Recipe 12 - Block Package XYZ if version < 0.16.0”
-This policy matches any ```h11``` packages with a version older than ```0.16.0```:
+### Recipe 12 - Block Package XYZ if version < 0.16.0
+This policy matches any ```h11``` packages with a version older than ```0.16.0```: <br/>
 Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
 ```
 wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-12/policy.rego
@@ -324,7 +324,73 @@ cat <<EOF > payload.json
 EOF
 ```
 
+***
+
+
+### Recipe 13 - Match versions less than 1.0.0, such as 0.14.0
+If you want to match versions less than ```1.0.0```, such as ```0.14.0```: <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-13/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "match versions less than 1.0.0",
+  "description": "match versions less than 1.0.0, such as 0.14.0",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 13
+}
+EOF
+```
+
 ```
 pip download h11==0.14.0
 cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
+
+Alternatively, here’s a simple (but fragile) example using string comparison:
+
+```
+package cloudsmith
+default match := false
+match if count(reason) > 0
+
+reason contains msg if {
+  pkg := input.v0["package"]
+  startswith(pkg.version, "1.")
+  msg := sprintf("Package version '%s' is less than 2.0.0", [pkg.version])
+}
+```
+
+This will match versions like "```1.9.9```" or "```1.0.0```", <b>but not</b> "```1.10.0```" being greater than "```1.2.```0" — since it's string-based. <br/>
+
+### Limitations
+- "```1.10.0```" < "```1.2.0```" is <b>true</b> in string comparison, but <b>false</b> semantically.
+- Pre-release versions like "```2.0.0-beta```" may confuse logic unless handled explicitly.
+- Multi-digit segments break string comparisons unless you zero-pad them ("```01.02.003```").
+
+### Recommendation
+If version control is essential:
+- Add <b>strict prefix/regex filters</b> (example: ```startswith(pkg.version, "2.")```)
+- Combine with file naming conventions or upload context
+- Enforce via CI before publishing, if possible
+
+### Safer Rego Pattern
+```
+package cloudsmith
+default match := false
+match if count(reason) > 0
+reason contains msg if {
+  pkg := input.v0["package"]
+  pkg.version < "2.0.0"
+  msg := sprintf("Package version '%s' is below required threshold of 2.0.0", [pkg.version])
+}
+```
+
+So: this works in simple cases, but not trustworthy for tight numeric ranges unless all version segments are zero-padded (for example: "```01.09.000```").
+
+***
+
