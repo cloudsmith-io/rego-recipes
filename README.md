@@ -255,7 +255,7 @@ cat <<EOF > payload.json
 EOF
 ```
 
-This CVE was published on ...
+This CVE was published on <b>24 April 2025</b> - much older than the 30 day threshold specified in the policy.
 
 ```
 pip download h11==0.14.0
