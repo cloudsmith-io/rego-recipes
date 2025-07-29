@@ -28,6 +28,7 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Architecture allow list](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-11---architecture-specific-allow-list)      | Policy that only allows ```amd64``` architecture packages and blocks others like arm64.          |  [Link](https://play.openpolicyagent.org/p/bmVtmxYysJ)  |
 | [Block package if version over 0.16.0](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-12---block-package-xyz-if-version--0160)  | ```semver.compare(pkg.version, "0.16.0") == -1``` should check if the version is less than ```0.16.0``` using semver-aware comparison.     |  Link  |
 | [Block package if version under 1.0.0](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-13---match-versions-less-than-100-such-as-0140)  | Cloudsmith's EPM currently does not support Rego's semver functions because those require a Rego SDK integration, which Cloudsmith doesn't provide at the moment. This means version comparison must be done via string comparison, which only works safely for zero-padded numeric versions or very simple SemVer patterns. If your versions are formatted like "1.2.3" without pre-release/build tags, you can sometimes get away with lexicographical comparisons.     |  Link  |
+| Block specific package and version  | Blocks a specific package and package version     |  Link  |
 | Limit Package Size          | The goal of this policy is to prevent packages larger than 30MB from being accepted during the sync process     |  Link  |
 | Not even sure what this is      | Insert Description   |  [Link](https://play.openpolicyagent.org/p/azphiCM3pz)  |
 | Enforce Upload Time Window  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
@@ -397,3 +398,30 @@ So: this works in simple cases, but not trustworthy for tight numeric ranges unl
 
 ***
 
+### Recipe 14 - Block specific package and version
+This policy will specifically block the Python package ```requests``` on version ```2.6.0```: <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-14/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "Block specific package and version",
+  "description": "match requests python package o v.2.6.0",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 14
+}
+EOF
+```
+
+```
+pip download requests==2.6.0
+cloudsmith push python acme-corporation/acme-repo-one requests-2.6.0-py2.py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+```
+
+<img width="988" height="738" alt="Screenshot 2025-07-29 at 13 06 05" src="https://github.com/user-attachments/assets/f3bed11b-be80-43af-8f16-4910f1576787" />
+
+***
