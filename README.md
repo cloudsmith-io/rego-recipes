@@ -425,3 +425,34 @@ cloudsmith push python acme-corporation/acme-repo-one requests-2.6.0-py2.py3-non
 <img width="988" height="738" alt="Screenshot 2025-07-29 at 13 06 05" src="https://github.com/user-attachments/assets/f3bed11b-be80-43af-8f16-4910f1576787" />
 
 ***
+
+### Recipe 15 - Block specifically based on CVEs
+Again, the Python package ```requests``` version ```2.6.0``` has the known vulnerability ```CVE-2018-18074```: <br/>
+We have commented out the other CVEs in this policy, but feel free remove those comments and add additional CVEs as a list. <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-15/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "Block specific CVE numbers",
+  "description": "This policy is only blocking CVE-2018-18074 specifically",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 15
+}
+EOF
+```
+
+```
+pip download requests==2.6.0
+cloudsmith push python acme-corporation/acme-repo-one requests-2.6.0-py2.py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+```
+
+<img width="987" height="742" alt="Screenshot 2025-07-29 at 13 43 39" src="https://github.com/user-attachments/assets/28f44055-8986-4304-a7e7-ad6bb17b47aa" />
+
+
+***
+
