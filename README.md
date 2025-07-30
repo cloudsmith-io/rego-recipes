@@ -72,7 +72,7 @@ cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO dist/dummy_unsigned-0.0.
 ***
 
 ### Recipe 2 - Restricting Package Based on Tags
-This policy checks whether a package includes a specific ```deprecated``` tag and marks it as a match if it does.
+This policy checks whether a package includes a specific ```deprecated``` tag and marks it as a match if it does. <br/>
 Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
 ```
 wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-2/policy.rego
@@ -94,6 +94,40 @@ Once ready, download a random package, in this case a python package called ```h
 pip download h11==0.14.0
 cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"  --tags deprecated
 ```
+
+***
+
+### Recipe 3 - Copyleft or restrictive OSS licenses
+This policy is designed to flag packages that use ```copyleft``` or ```restrictive``` open-source licenses, particularly those unsuitable for production use <b>without legal review or approval</b>. <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-3/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Copyleft licensing policy",
+  "description": "This policy checks packages that are unsuitable for production.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 3
+}
+EOF
+```
+
+Once ready, download the Python ```Gitlab v.3.1.1``` package that we know has a ```LGPLv3 license``` that should trigger the policy:
+```
+pip download python-gitlab==3.1.1
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO python_gitlab-3.1.1-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"  --tags lgplv3license
+cloudsmith list packages acme-corporation/acme-repo-one -k "$CLOUDSMITH_API_KEY" -q "format:python AND tag:lgplv3license"
+```
+
+Note: If you have a tagging response action attached to your policy, you could tag the package with ```non-compliant-license``` for further review:
+
+<img width="856" height="663" alt="Screenshot 2025-07-30 at 14 21 19" src="https://github.com/user-attachments/assets/8f795b5e-6516-4173-ac94-817574697b04" />
+
+<img width="1494" height="681" alt="Screenshot 2025-07-30 at 14 28 43" src="https://github.com/user-attachments/assets/d123ea4e-2318-46b2-8aab-aa0c408e08c2" />
+
 
 ***
 
