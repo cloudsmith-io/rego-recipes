@@ -1,6 +1,4 @@
 package cloudsmith
-import rego.v1
-
 default match := false
 
 # Expanded list of SPDX identifiers and common free-text variants
@@ -13,9 +11,12 @@ copyleft := {
     "gnu general public license"
 }
 
-# Main policy rule
-match if {
-    lower_license := lower(input.v0["package"].license)
+match if count(reason) > 0
+
+reason contains msg if {
+    pkg := input.v0["package"]
+    raw_license := lower(pkg.license.raw_license)
     some l in copyleft
-    contains(lower_license, l)
+    contains(raw_license, l)
+    msg := sprintf("License '%s' is considered copyleft", [pkg.license.raw_license])
 }
