@@ -491,3 +491,28 @@ cloudsmith push python acme-corporation/acme-repo-one requests-2.6.0-py2.py3-non
 
 ***
 
+
+### Recipe 16 - Suspicious Package Upload Window
+Assuming your organisation don't expect packages to be uploaded or modified at specific times, the below policy can detect package uploads at ```9am-11am UTC``` - regardless of the package name. <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-16/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "Package Upload Window",
+  "description": "Flag any package uploaded outside of working hours",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 16
+}
+EOF
+```
+
+```
+pip download <package-name>
+cloudsmith push python acme-corporation/acme-repo-one <package-name>.whl -k "$CLOUDSMITH_API_KEY"
+```
+
