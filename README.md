@@ -129,7 +129,7 @@ Note: If you have a tagging response action attached to your policy, you could t
 
 ***
 
-### Recipe 4 - Restricting Package Based on Tags
+### Recipe 4 - Quarantine Debug Builds
 This policy checks whether a package includes specific ```debug```, ```test```, or ```temp``` descriptors in the filename.
 Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
 ```
