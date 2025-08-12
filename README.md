@@ -203,7 +203,8 @@ A straightforward way to test this policy is to take a package that already has 
 
 ```
 pip download h11==0.14.0
-cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+mv h11-0.14.0-py3-none-any.whl h11-test.whl
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-test.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 ***
@@ -264,7 +265,7 @@ To demonstrate this policy, you can use the ```requests``` Python package, which
 
 ```
 pip download h11==0.14.0
-cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 You'll probably want to enable a [Quarantine](https://help.cloudsmith.io/docs/package-quarantine) action for policies dealing with critical vulnerabilities that can be fixed:
@@ -296,7 +297,7 @@ This CVE was published on <b>24 April 2025</b> - much older than the 30 day thre
 
 ```
 pip download h11==0.14.0
-cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 ***
@@ -327,7 +328,7 @@ However, pip by default fetches packages built for your local system architectur
 Here's a command to download a known Python package with an ARM-specific wheel using pip download:
 ```
 pip download numpy --platform manylinux2014_aarch64 --only-binary=:all: --python-version 38 --implementation cp --abi cp38
-cloudsmith push python acme-corporation/acme-repo-one numpy-1.24.4-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl -k "$CLOUDSMITH_API_KEY"
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO numpy-1.24.4-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 - ```--platform manylinux2014_aarch64```: targets ```arm64``` (```aarch64```)
@@ -382,7 +383,7 @@ EOF
 
 ```
 pip download h11==0.14.0
-cloudsmith push python acme-corporation/acme-repo-one h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 <img width="1492" height="433" alt="Screenshot 2025-07-28 at 13 57 54" src="https://github.com/user-attachments/assets/ff3e5776-6d2c-47d9-b561-1da9c45bf59c" />
@@ -452,7 +453,7 @@ EOF
 
 ```
 pip download requests==2.6.0
-cloudsmith push python acme-corporation/acme-repo-one requests-2.6.0-py2.py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO requests-2.6.0-py2.py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 <img width="988" height="738" alt="Screenshot 2025-07-29 at 13 06 05" src="https://github.com/user-attachments/assets/f3bed11b-be80-43af-8f16-4910f1576787" />
@@ -481,7 +482,7 @@ EOF
 
 ```
 pip download requests==2.6.0
-cloudsmith push python acme-corporation/acme-repo-one requests-2.6.0-py2.py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO requests-2.6.0-py2.py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
 <img width="987" height="742" alt="Screenshot 2025-07-29 at 13 43 39" src="https://github.com/user-attachments/assets/28f44055-8986-4304-a7e7-ad6bb17b47aa" />
@@ -511,6 +512,6 @@ EOF
 
 ```
 pip download <package-name>
-cloudsmith push python acme-corporation/acme-repo-one <package-name>.whl -k "$CLOUDSMITH_API_KEY"
+cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO <package-name>.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
