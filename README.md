@@ -210,7 +210,7 @@ cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-test.whl -k "$CLOUDS
 ***
 
 ### Recipe 7 - Approved Upstreams based on Tags
-Validate filename matches a semantic or naming pattern where ```MAJOR```.```MINOR```, and ```PATCH``` are all numeric. 
+Simply put, this approves packages based on the specified upstream source. <br/>
 Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
 ```
 wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-7/policy.rego
