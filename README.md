@@ -515,3 +515,49 @@ pip download <package-name>
 cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO <package-name>.whl -k "$CLOUDSMITH_API_KEY"
 ```
 
+***
+
+
+### Recipe 17 - Tag-Based Exception Policy
+Use this policy when you need a quick, time-boxed exception. For example, policy can quarantine by severity; where a separate terminal exemption policy matches if a package has an exempt tag and stops further evaluation.<br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-16/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "Tag based exception",
+  "description": "Exception policy based on basic tagging",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 16
+}
+EOF
+```
+
+**Trade-off:** While the tag remains, new CVEs on that package won’t trigger quarantine. You'll need to review those tags regularly.
+
+***
+
+### Recipe 18 - Exact allowlist exception policy with CVSS ceiling
+Use when you want tight control per version, but still prevent exemptions if a CVSS exceeds a ceiling. <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-16/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "Tag based exception",
+  "description": "Exception policy based on basic tagging",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": false,
+  "precedence": 16
+}
+EOF
+```
+
+**Trade-off:** While the tag remains, new CVEs on that package won’t trigger quarantine. You'll need to review those tags regularly.
