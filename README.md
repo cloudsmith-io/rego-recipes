@@ -31,6 +31,8 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Block specific package and version](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-14---block-specific-package-and-version)  | Blocks a specific package and package version     |  Link  |
 | [Block specific CVE numbers](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-15---block-specifically-based-on-cves)  | Blocks a specific package based on known CVE numbers     |  Link  |
 | [Enforce Upload Time Window](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-16---suspicious-package-upload-window)  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
+| [Tag-based bypass Exception](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-17---tag-based-exception-policy)  | This is a simple tag-based exception.     |  Link  |
+| [Exact allowlist with CVSS limit exemption](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-18---exact-allowlist-exception-policy-with-cvss-ceiling)  | Use when you want tight control per version, but still prevent exemptions if a CVSS exceeds a ceiling.     |  Link  |
 
 
 ***
@@ -522,7 +524,7 @@ cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO <package-name>.whl -k "$
 Use this policy when you need a quick, time-boxed exception. For example, policy can quarantine by severity; where a separate terminal exemption policy matches if a package has an exempt tag and stops further evaluation.<br/>
 Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
 ```
-wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-16/policy.rego
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-17/policy.rego
 escaped_policy=$(jq -Rs . < policy.rego)
 
 cat <<EOF > payload.json
@@ -532,7 +534,7 @@ cat <<EOF > payload.json
   "rego": $escaped_policy,
   "enabled": true,
   "is_terminal": false,
-  "precedence": 16
+  "precedence": 17
 }
 EOF
 ```
@@ -545,17 +547,17 @@ EOF
 Use when you want tight control per version, but still prevent exemptions if a CVSS exceeds a ceiling. <br/>
 Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
 ```
-wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-16/policy.rego
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-18/policy.rego
 escaped_policy=$(jq -Rs . < policy.rego)
 
 cat <<EOF > payload.json
 {
-  "name": "Tag based exception",
-  "description": "Exception policy based on basic tagging",
+  "name": "Specific allowlist exception",
+  "description": "Controls based on exact version but still prevent exemptions if a CVSS exceeds a ceiling.",
   "rego": $escaped_policy,
   "enabled": true,
   "is_terminal": false,
-  "precedence": 16
+  "precedence": 18
 }
 EOF
 ```
