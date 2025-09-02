@@ -14,7 +14,7 @@ These recipes are designed to be modular, auditable, and production-ready - with
 
 ***
 
-### A whitelist of Known Publishers
+### A whitelist of Trusted Publishers
 
 If the package comes from an upstream, block it unless it's on the approved publishers list.
 Setup as the policy with an action to QUARANTINE and tag 'untrusted-publisher'.
@@ -26,7 +26,7 @@ TODO
 
 ***
 
-### Block any models that have a copyleft license or have no license specified.
+### Block models that have copyleft licenses or have no license.
 
 Download the ```unknown_or_copyleft_licenses.rego``` and create the associated ```payload.json``` with the below command:
 ```
@@ -35,7 +35,7 @@ TODO
 
 ***
 
-### Block any model with risky file types in it
+### Block models with risky file types in it
 
 Block any upstream huggingface package that has risky files in it, particularly pickle or other
 risky files like zips, pytorch, keras, and tensorflow h5 models.
@@ -50,7 +50,7 @@ TODO
 
 ***
 
-### A whitelist for particular models
+### A whitelist for particular models - as an override to prior policies.
 
 A final policy that acts as a whitelist or exception-based policy. The prior policies
 might have quarantined the package but you want to encode some known exceptions.
