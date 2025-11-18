@@ -8,9 +8,20 @@ pkg := input.v0.package
 
 hf_pkg if "huggingface" == pkg.format
 
-is_upstream_pkg if pkg.uploader.slug_perm == "Cloudsmith"
+is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-KY3"
 
-risky_file_extensions := {".bin", ".h5", ".keras", ".pkl", "pt", ".zip",}
+# Formats and their extensions
+# H5 (.h5, .hdf5)
+# Paddle (.pdparams)
+# PyTorch (.bin, .pt, .pth, .ckpt)
+# Pickle (.pkl, .dat)
+# Numpy (.npy)
+# JobLib (.joblib)
+# Dill (.dill)
+# SavedModel (.pb)
+# GGUF (.gguf)
+
+risky_file_extensions := {".h5", ".hdf5", ".pdparams", ".keras", ".bin", ".pkl", ".dat", "pt", ".pth", ".ckpt", ".npy", ".joblib", ".dill", ".pb", ".gguf", ".zip",}
 
 match if {
     hf_pkg
