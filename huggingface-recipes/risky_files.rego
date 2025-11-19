@@ -8,6 +8,7 @@ pkg := input.v0.package
 
 hf_pkg if "huggingface" == pkg.format
 
+# Upstream packages are fetched by a system user
 is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-o6v"
 
 # Formats and their extensions
