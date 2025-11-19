@@ -2,7 +2,7 @@
 A curated collection of Enterprise Policy Management (EPM) recipes for Hugging Face models/datasets.
 <br/><br/>
 
-Cloudsmith provides a customise data model for Hugging Face models and datasets. This means we can write policies that target attributes particular to this package type.
+Cloudsmith provides a customized data model for Hugging Face models and datasets. This means we can write policies that target attributes particular to this package type.
 
 ***
 
@@ -11,8 +11,8 @@ Cloudsmith provides a customise data model for Hugging Face models and datasets.
 |           Name              |                                        Description                                                              |  Rego Playground |
 |         --------            |                                          -------                                                                |      -------     |
 | [A whitelist of trusted publishers](https://github.com/cloudsmith-io/rego-recipes/tree/main/huggingface-recipes/README.md?#a-whitelist-of-trusted-publishers)   | This policy quarantines upstream models from untrusted publishers.    |  Link  |
-| [Block models with unsafe files found via a security scan](https://github.com/cloudsmith-io/rego-recipes/tree/main/huggingface-recipes/README.md?#block-models-with-unsafe-files-found-via-a-security-scan)   | Use Hugging FaceHub security scan data to block safe models. |  Link  |
-| [Policy based on model card data](https://github.com/cloudsmith-io/rego-recipes/tree/main/huggingface-recipes/README.md?#policy-based-on-model-card-data)   | A policy that makes use of modelcard data. |  Link  |
+| [Block models with unsafe files found via a security scan](https://github.com/cloudsmith-io/rego-recipes/tree/main/huggingface-recipes/README.md?#block-models-with-unsafe-files-found-via-a-security-scan)   | Use Hugging FaceHub security scan data to block unsafe models. |  Link  |
+| [Policy based on model card data](https://github.com/cloudsmith-io/rego-recipes/tree/main/huggingface-recipes/README.md?#policy-based-on-model-card-data)   | A policy that makes use of model card data. |  Link  |
 | [Block models with risky file formats](https://github.com/cloudsmith-io/rego-recipes/tree/main/huggingface-recipes/README.md?#block-models-with-risky-file-formats)   | This policy quarantines models with risky file types.  |  Link  |
 
 ***
@@ -42,7 +42,7 @@ EOF
 
 After the policy has been created, associate an action to SetPackageState to AVAILABLE and another action to tag the model with 'trusted-publisher'. Documentation on how to create an action programmatically can be found at: [Getting Started with Enterprise Policy Manager - Adding actions to a policy](https://docs.cloudsmith.com/supply-chain-security/epm/getting-started#step-3-adding-actions-to-a-policy).
 
-Note, the policy in `upstream_verified.rego` targets packages pulled via a Hugging Face upstream and ignores packages that are pushed directly into Cloudsmith. Packages pulled via a Cloudsmith upstream provide a reliable way to determine who published the model on Hugging Face Hub. Locally pushed packages do not have the same tracability. 
+Note, the policy in `trusted_publishers.rego` targets packages pulled via a Hugging Face upstream and ignores packages that are pushed directly into Cloudsmith. Packages pulled via a Cloudsmith upstream provide a reliable way to determine who published the model on Hugging Face Hub. Locally pushed packages do not have the same traceability. 
 
 ***
 
@@ -102,7 +102,7 @@ EOF
 
 ### Block models with risky file formats
 
-Many of the file formats used by models and datasets suffer from serialization attacks. For example, [Pickle](https://docs.python.org/3/library/pickle.html) is a popular file format used in Hugging Face models that has well-known exploits. Further, some formats, such as Keras can be securely deserialized but can come with embedded code extensions (e.g. keras lambda layer) that allow for arbitrary code execution. Alternative, safer model file-formats have been developed, such as [safetensors](https://github.com/huggingface/safetensors) from Hugging Face and [ONNX](https://onnx.ai) that do not suffer from these attacks. For background on these attack vector [see here](https://github.com/protectai/modelscan/blob/main/docs/model_serialization_attacks.md).
+Many of the file formats used by models and datasets suffer from serialization attacks. For example, [Pickle](https://docs.python.org/3/library/pickle.html) is a popular file format used in Hugging Face models that has well-known exploits. Further, some formats, such as Keras can be securely deserialized but can come with embedded code extensions (e.g. keras lambda layer) that allow for arbitrary code execution. Alternative, safer model file-formats have been developed, such as [safetensors](https://github.com/huggingface/safetensors) from Hugging Face and [ONNX](https://onnx.ai) that do not suffer from these attacks. For background on these attack vectors [see here](https://github.com/protectai/modelscan/blob/main/docs/model_serialization_attacks.md).
 
 The following policy will match models coming from Hugging Face Hub that contain risky formats, such as pickle-based formats or other files such as zips, pytorch, keras, and tensorflow h5 models. After the policy has been created, associate an Action with the Policy to SetPackageState to QUARANTINE.
 

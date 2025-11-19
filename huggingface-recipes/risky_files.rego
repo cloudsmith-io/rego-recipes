@@ -8,7 +8,7 @@ pkg := input.v0.package
 
 hf_pkg if "huggingface" == pkg.format
 
-is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-KY3"
+is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-o6v"
 
 # Formats and their extensions
 # H5 (.h5, .hdf5)
@@ -21,7 +21,7 @@ is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-KY3"
 # SavedModel (.pb)
 # GGUF (.gguf)
 
-risky_file_extensions := {".h5", ".hdf5", ".pdparams", ".keras", ".bin", ".pkl", ".dat", "pt", ".pth", ".ckpt", ".npy", ".joblib", ".dill", ".pb", ".gguf", ".zip",}
+risky_file_extensions := {".h5", ".hdf5", ".pdparams", ".keras", ".bin", ".pkl", ".dat", ".pt", ".pth", ".ckpt", ".npy", ".joblib", ".dill", ".pb", ".gguf", ".zip",}
 
 match if {
     hf_pkg
