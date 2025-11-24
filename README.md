@@ -33,6 +33,8 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Enforce Upload Time Window](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-16---suspicious-package-upload-window)  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
 | [Tag-based bypass Exception](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-17---tag-based-exception-policy)  | This is a simple tag-based exception.     |  Link  |
 | [Exact allowlist with CVSS limit exemption](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-18---exact-allowlist-exception-policy-with-cvss-ceiling)  | Use when you want tight control per version, but still prevent exemptions if a CVSS exceeds a ceiling.     |  Link  |
+| [Malware advisory](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-19---malware advisory)  | Match for malware advisory.     |  Link  |
+| [npm last published date to npm upstream](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-20---last-published-to-npm-upstream)  | Use when you want to tag or stop devs from using the lastest npm package.     |  Link  |
 | [Huggingface Recipes](https://github.com/cloudsmith-io/rego-recipes/blob/main/huggingface-recipes/README.md/)  | Policies relating to Hugging Face models/datasets.     |  N/A  |
 
 ***
