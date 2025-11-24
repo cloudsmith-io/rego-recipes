@@ -566,6 +566,46 @@ EOF
 
 ***
 
+### Recipe 19 -  Control malware ingestion
+Use when you want to match based on malware advisory <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-19/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "Malware",
+  "description": "Control malware ingestion.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": true,
+  "precedence": 1
+}
+EOF
+```
+***
+
+### Recipe 20 - Exact allowlist exception policy with CVSS ceiling
+Use when you want to match based on the npm last published date on npm upstream <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-20/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "npm last published date on npm upstream",
+  "description": "Match if the publish date comes after the date of the set number of days ago..",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": true,
+  "precedence": 1
+}
+EOF
+```
+***
+
 ### Hugging Face recipes
 
 For policies relating to Hugging Face models and datasets, see [Hugging Face Recipes](https://github.com/cloudsmith-io/rego-recipes/blob/main/huggingface-recipes/README.md/).
