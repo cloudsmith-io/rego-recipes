@@ -599,7 +599,7 @@ escaped_policy=$(jq -Rs . < policy.rego)
 cat <<EOF > payload.json
 {
   "name": "npm last published date on npm upstream",
-  "description": "Match if the publish date comes after the date of the set number of days ago..",
+  "description": "Match if the publish date comes after the date of the set number of days ago.",
   "rego": $escaped_policy,
   "enabled": true,
   "is_terminal": true,
