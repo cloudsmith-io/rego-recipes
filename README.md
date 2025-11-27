@@ -35,6 +35,7 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Exact allowlist with CVSS limit exemption](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-18---exact-allowlist-exception-policy-with-cvss-ceiling)  | Use when you want tight control per version, but still prevent exemptions if a CVSS exceeds a ceiling.     |  Link  |
 | [Malware advisory](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-19---malware-advisory)  | Match for malware advisory.     |  Link  |
 | [npm last published date](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-20---npm-last-published-date)  | Use when you want to tag or stop devs from using the lastest npm package.     |  Link  |
+| [Exact blocklist by format/name/version](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-21---exact-blocklist) | Blocks packages that appear on a known-bad exact list across formats (e.g. npm/python) before your upstream removes them.     |  Link  |
 | [Huggingface Recipes](https://github.com/cloudsmith-io/rego-recipes/blob/main/huggingface-recipes/README.md/)  | Policies relating to Hugging Face models/datasets.     |  N/A  |
 
 ***
@@ -607,6 +608,30 @@ cat <<EOF > payload.json
 EOF
 ```
 ***
+
+### Recipe 21 - Exact blocklist
+
+This policy lets you maintain an **exact deny list** of suspicious or malicious packages across formats using the key pattern:
+
+`<format>:<name>:<version>` (for example: `npm:@alloc/quick-lru:5.2.0`, `python:requests:2.6.0`).
+
+It’s especially useful for incident response scenarios like Shai-Hulud-style attacks, where you receive a CSV or text list of impacted packages and need to block them immediately — even before upstream registries have removed them.
+
+Download the `policy.rego` and create the associated `payload.json` with:
+
+```bash
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-21/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Exact blocklist by format/name/version",
+  "description": "Blocks packages that appear on an external suspicious or malicious list, using exact format:name:version matches.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": true,
+  "precedence": 1
+}
+EOF
 
 ### Hugging Face recipes
 
