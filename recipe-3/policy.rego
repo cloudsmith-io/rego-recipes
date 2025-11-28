@@ -96,19 +96,14 @@ copyleft := gpl_licenses | lgpl_licenses | agpl_licenses | mpl_licenses | cddl_l
 # Main policy rule
 match if {
     input.v0.package.license.oss_license.spdx_identifier in copyleft
-} else {
-    # Also check raw_license for copyleft identifiers (case-insensitive substring match)
-    some l in copyleft
-    lower(input.v0.package.license.oss_license.raw_license) contains lower(l)
 }
 
-# Provide a reason for blocking the package
-reason[msg] {
-    input.v0.package.license.oss_license.spdx_identifier in copyleft
-    msg := sprintf("Blocked: SPDX license identifier '%v' is a copyleft license.", [input.v0.package.license.oss_license.spdx_identifier])
+reason contains msg if {
+    match
+    lic := input.v0.package.license.oss_license.spdx_identifier
+    msg := sprintf(
+        "Copyleft license detected (%s). Package blocked/quarantined per license policy.",
+        [lic],
+    )
 }
-reason[msg] {
-    some l in copyleft
-    lower(input.v0.package.license.oss_license.raw_license) contains lower(l)
-    msg := sprintf("Blocked: Raw license field contains copyleft license identifier '%v'.", [l])
-}
+
