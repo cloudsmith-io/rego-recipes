@@ -33,6 +33,9 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | [Enforce Upload Time Window](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-16---suspicious-package-upload-window)  | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads     |  Link  |
 | [Tag-based bypass Exception](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-17---tag-based-exception-policy)  | This is a simple tag-based exception.     |  Link  |
 | [Exact allowlist with CVSS limit exemption](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-18---exact-allowlist-exception-policy-with-cvss-ceiling)  | Use when you want tight control per version, but still prevent exemptions if a CVSS exceeds a ceiling.     |  Link  |
+| [Malware advisory](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-19---malware-advisory)  | Match for malware advisory.     |  Link  |
+| [npm last published date](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-20---npm-last-published-date)  | Use when you want to tag or stop devs from using the latest npm package.     |  Link  |
+| [Exact blocklist by format/name/version](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-21---exact-blocklist) | Blocks packages that appear on a known-bad exact list across formats (e.g. npm/python) before your upstream removes them.     |  Link  |
 | [Huggingface Recipes](https://github.com/cloudsmith-io/rego-recipes/blob/main/huggingface-recipes/README.md/)  | Policies relating to Hugging Face models/datasets.     |  N/A  |
 
 ***
@@ -565,6 +568,70 @@ EOF
 **Trade-off:** While the tag remains, new CVEs on that package won’t trigger quarantine. You'll need to review those tags regularly.
 
 ***
+
+### Recipe 19 - Malware advisory
+Use when you want to match based on malware advisory <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-19/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "Malware",
+  "description": "Control malware ingestion.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": true,
+  "precedence": 1
+}
+EOF
+```
+***
+
+### Recipe 20 - npm last published date
+Use when you want to match based on the npm last published date on npm upstream <br/>
+Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
+```
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-20/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+
+cat <<EOF > payload.json
+{
+  "name": "npm last published date on npm upstream",
+  "description": "Match if the publish date comes after the date of the set number of days ago.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": true,
+  "precedence": 1
+}
+EOF
+```
+***
+
+### Recipe 21 - Exact blocklist
+
+This policy lets you maintain an **exact deny list** of suspicious or malicious packages across formats using the key pattern:
+
+`<format>:<name>:<version>` (for example: `npm:@alloc/quick-lru:5.2.0`, `python:requests:2.6.0`).
+
+It’s especially useful for incident response scenarios like Shai-Hulud-style attacks, where you receive a CSV or text list of impacted packages and need to block them immediately — even before upstream registries have removed them.
+
+Download the `policy.rego` and create the associated `payload.json` with:
+
+```bash
+wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-21/policy.rego
+escaped_policy=$(jq -Rs . < policy.rego)
+cat <<EOF > payload.json
+{
+  "name": "Exact blocklist by format/name/version",
+  "description": "Blocks packages that appear on an external suspicious or malicious list, using exact format:name:version matches.",
+  "rego": $escaped_policy,
+  "enabled": true,
+  "is_terminal": true,
+  "precedence": 1
+}
+EOF
 
 ### Hugging Face recipes
 
