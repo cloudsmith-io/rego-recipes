@@ -27,8 +27,6 @@ These recipes are designed to be modular, auditable, and production-ready - with
 | CVSS with EPSS context | Combines High scoring CVSS vulnerability with EPSS scoring context that go above a specific threshold. |
 | [Architecture allow list](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-11---architecture-specific-allow-list) | Policy that only allows ```amd64``` architecture packages and blocks others like arm64. |
 | [Block package if version over 0.16.0](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-12---block-package-xyz-if-version--0160) | ```semver.compare(pkg.version, "0.16.0") == -1``` should check if the version is less than ```0.16.0``` using semver-aware comparison. |
-| [Block package if version under 1.0.0](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-13---match-versions-less-than-100-such-as-0140) | Cloudsmith's EPM currently does not support Rego's semver functions because those require a Rego SDK integration, which Cloudsmith doesn't provide at the moment. This means version comparison must be done via string comparison, which only works safely for zero-padded numeric versions or very simple SemVer patterns. If your versions are formatted like "1.2.3" without pre-release/build tags, you can sometimes get away with lexicographical comparisons. |
-| [Block specific package and version](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-14---block-specific-package-and-version) | Blocks a specific package and package version |
 | [Block specific CVE numbers](https://github.com/cloudsmith-io/rego-recipes?tab=readme-ov-file#recipe-15---block-specifically-based-on-cves) | Blocks a specific package based on known CVE numbers |
 | [Enforce Upload Time Window](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-16---suspicious-package-upload-window) | Allow uploads during business hours (9 AM – 5 PM UTC), to catch anomalous behaviour like late-night uploads |
 | [Tag-based bypass Exception](https://github.com/cloudsmith-io/rego-recipes/tree/main?tab=readme-ov-file#recipe-17---tag-based-exception-policy) | This is a simple tag-based exception. |
@@ -363,105 +361,6 @@ cat <<EOF > payload.json
 }
 EOF
 ```
-
-***
-
-
-### Recipe 13 - Match versions less than 1.0.0, such as 0.14.0
-If you want to match versions less than ```1.0.0```, such as ```0.14.0```: <br/>
-Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
-```
-wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-13/policy.rego
-escaped_policy=$(jq -Rs . < policy.rego)
-
-cat <<EOF > payload.json
-{
-  "name": "match versions less than 1.0.0",
-  "description": "match versions less than 1.0.0, such as 0.14.0",
-  "rego": $escaped_policy,
-  "enabled": true,
-  "is_terminal": false,
-  "precedence": 13
-}
-EOF
-```
-
-```
-pip download h11==0.14.0
-cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO h11-0.14.0-py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
-```
-
-<img width="1492" height="433" alt="Screenshot 2025-07-28 at 13 57 54" src="https://github.com/user-attachments/assets/ff3e5776-6d2c-47d9-b561-1da9c45bf59c" />
-
-
-Alternatively, here’s a simple (but fragile) example using string comparison:
-
-```
-package cloudsmith
-default match := false
-match if count(reason) > 0
-
-reason contains msg if {
-  pkg := input.v0["package"]
-  startswith(pkg.version, "1.")
-  msg := sprintf("Package version '%s' is less than 2.0.0", [pkg.version])
-}
-```
-
-This will match versions like "```1.9.9```" or "```1.0.0```", <b>but not</b> "```1.10.0```" being greater than "```1.2.```0" — since it's string-based. <br/>
-
-### Limitations
-- "```1.10.0```" < "```1.2.0```" is <b>true</b> in string comparison, but <b>false</b> semantically.
-- Pre-release versions like "```2.0.0-beta```" may confuse logic unless handled explicitly.
-- Multi-digit segments break string comparisons unless you zero-pad them ("```01.02.003```").
-
-### Recommendation
-If version control is essential:
-- Add <b>strict prefix/regex filters</b> (example: ```startswith(pkg.version, "2.")```)
-- Combine with file naming conventions or upload context
-- Enforce via CI before publishing, if possible
-
-### Safer Rego Pattern
-```
-package cloudsmith
-default match := false
-match if count(reason) > 0
-reason contains msg if {
-  pkg := input.v0["package"]
-  pkg.version < "2.0.0"
-  msg := sprintf("Package version '%s' is below required threshold of 2.0.0", [pkg.version])
-}
-```
-
-So: this works in simple cases, but not trustworthy for tight numeric ranges unless all version segments are zero-padded (for example: "```01.09.000```").
-
-***
-
-### Recipe 14 - Block specific package and version
-This policy will specifically block the Python package ```requests``` on version ```2.6.0```: <br/>
-Download the ```policy.rego``` and create the associated ```payload.json``` with the below command:
-```
-wget https://raw.githubusercontent.com/cloudsmith-io/rego-recipes/refs/heads/main/recipe-14/policy.rego
-escaped_policy=$(jq -Rs . < policy.rego)
-
-cat <<EOF > payload.json
-{
-  "name": "Block specific package and version",
-  "description": "match requests python package o v.2.6.0",
-  "rego": $escaped_policy,
-  "enabled": true,
-  "is_terminal": false,
-  "precedence": 14
-}
-EOF
-```
-
-```
-pip download requests==2.6.0
-cloudsmith push python $CLOUDSMITH_ORG/$CLOUDSMITH_REPO requests-2.6.0-py2.py3-none-any.whl -k "$CLOUDSMITH_API_KEY"
-```
-
-<img width="988" height="738" alt="Screenshot 2025-07-29 at 13 06 05" src="https://github.com/user-attachments/assets/f3bed11b-be80-43af-8f16-4910f1576787" />
 
 ***
 
