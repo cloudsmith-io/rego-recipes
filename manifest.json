@@ -1,0 +1,257 @@
+{
+  "version": "1.1.0",
+  "generatedAt": "2026-01-14T16:39:49.041Z",
+  "totalRecipes": 25,
+  "recipes": [
+    {
+      "id": "recipe-1/policy",
+      "name": "Enforcing Signed Packages",
+      "path": "./recipe-1/policy.rego",
+      "export": "./recipe-1/policy",
+      "code": "package cloudsmith\nimport rego.v1\ndefault match := false\n\nmatch if count(reason) > 0\n\nreason contains msg if {\n  pkg := input.v0[\"package\"]\n  not pkg.signed\n  msg := \"The package must be signed to be published to this repository.\"\n}\n",
+      "description": "This policy enforces mandatory GPG/DSA signature checks on packages during their sync/import into Cloudsmith.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-2/policy",
+      "name": "Restricting Package Based on Tags",
+      "path": "./recipe-2/policy.rego",
+      "export": "./recipe-2/policy",
+      "code": "package cloudsmith\nimport rego.v1\ndefault match := false\n\nrequired_tag := \"deprecated\"\n\nmatch if count(reason) > 0\n\nreason contains msg if {\n  pkg := input.v0[\"package\"]\n  some tag in pkg.tags\n  tag.name == required_tag\n  msg := sprintf(\"Package has required tag: '%s'\", [required_tag])\n}\n",
+      "description": "This policy checks whether a package includes a specific `deprecated` tag and marks it as a match if it does.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-3/policy",
+      "name": "Copyleft or restrictive OSS licenses",
+      "path": "./recipe-3/policy.rego",
+      "export": "./recipe-3/policy",
+      "code": "package cloudsmith\n\ndefault match := false\n\n# GNU General Public License (GPL) variants\ngpl_licenses := {\n    \"GPL-1.0-only\",\n    \"GPL-1.0-or-later\",\n    \"GPL-2.0\",\n    \"GPL-2.0-only\",\n    \"GPL-2.0-or-later\",\n    \"GPL-3.0\",\n    \"GPL-3.0-only\",\n    \"GPL-3.0-or-later\",\n}\n\n# GNU Lesser General Public License (LGPL) variants\nlgpl_licenses := {\n    \"LGPL-2.0\",\n    \"LGPL-2.0-only\",\n    \"LGPL-2.0-or-later\",\n    \"LGPL-2.1\",\n    \"LGPL-2.1-only\",\n    \"LGPL-2.1-or-later\",\n    \"LGPL-3.0\",\n    \"LGPL-3.0-only\",\n    \"LGPL-3.0-or-later\",\n}\n\n# GNU Affero General Public License (AGPL) variants\nagpl_licenses := {\n    \"AGPL-1.0\",\n    \"AGPL-1.0-only\",\n    \"AGPL-1.0-or-later\",\n    \"AGPL-3.0\",\n    \"AGPL-3.0-only\",\n    \"AGPL-3.0-or-later\",\n}\n\n# Mozilla Public License (MPL) variants\nmpl_licenses := {\n    \"MPL-1.0\",\n    \"MPL-1.1\",\n    \"MPL-2.0\",\n}\n\n# Common Development and Distribution License (CDDL) variants\ncddl_licenses := {\n    \"CDDL-1.0\",\n    \"CDDL-1.1\",\n}\n\n# Eclipse Public License (EPL) variants\nepl_licenses := {\n    \"EPL-1.0\",\n    \"EPL-2.0\",\n}\n\n# Open Software License (OSL) variants\nosl_licenses := {\n    \"OSL-1.0\",\n    \"OSL-2.0\",\n    \"OSL-3.0\",\n}\n\n# GNU Free Documentation License (GFDL) variants\ngfdl_licenses := {\n    \"GFDL-1.1-only\",\n    \"GFDL-1.1-or-later\",\n    \"GFDL-1.2-only\",\n    \"GFDL-1.2-or-later\",\n    \"GFDL-1.3-only\",\n    \"GFDL-1.3-or-later\",\n}\n\n# Creative Commons Share Alike (CC-BY-SA) variants\ncc_by_sa_licenses := {\n    \"CC-BY-SA-1.0\",\n    \"CC-BY-SA-2.0\",\n    \"CC-BY-SA-2.5\",\n    \"CC-BY-SA-3.0\",\n    \"CC-BY-SA-4.0\",\n}\n\n# Other copyleft licenses\nother_copyleft_licenses := {\n    \"QPL-1.0\",\n    \"Sleepycat\",\n    \"SSPL-1.0\",\n    \"copyleft-next-0.3.0\",\n}\n\n# Combined copyleft license set\ncopyleft := gpl_licenses | lgpl_licenses | agpl_licenses | mpl_licenses | cddl_licenses | epl_licenses | osl_licenses | gfdl_licenses | cc_by_sa_licenses | other_copyleft_licenses\n\n# Main policy rule\nmatch if {\n    input.v0.package.license.oss_license.spdx_identifier in copyleft\n}\n\nreason contains msg if {\n    match\n    lic := input.v0.package.license.oss_license.spdx_identifier\n    msg := sprintf(\n        \"Copyleft license detected (%s). Package blocked/quarantined per license policy.\",\n        [lic],\n    )\n}\n\n",
+      "description": "This policy is designed to flag packages that use `copyleft` or `restrictive` open-source licenses, particularly those unsuitable for production use without legal review or approval.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-4/policy",
+      "name": "Quarantine Debug Builds",
+      "path": "./recipe-4/policy.rego",
+      "export": "./recipe-4/policy",
+      "code": "package cloudsmith\nimport rego.v1\ndefault match := false\n\nmatch if count(reason) > 0\n\nreason contains msg if {\n  pkg := input.v0[\"package\"]\n  re_match(\".*(debug|test|tmp).*\", pkg.filename)\n  msg := sprintf(\"Debug/test artifact detected in filename: %s\", [pkg.filename])\n}\n",
+      "description": "This policy checks whether a package includes specific `debug`, `test`, or `temp` descriptors in the filename.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-5/policy",
+      "name": "Limit Tag Sprawl",
+      "path": "./recipe-5/policy.rego",
+      "export": "./recipe-5/policy",
+      "code": "package cloudsmith\nimport rego.v1\ndefault match := false\n\nmax_tags := 5\n\nmatch if count(reason) > 0\n\nreason contains msg if {\n  pkg := input.v0[\"package\"]\n  count(pkg.tags) > max_tags\n  msg := sprintf(\"Package has too many tags (%d)\", [count(pkg.tags)])\n}\n",
+      "description": "This policy checks whether a package already includes 5 or more assigned tags - considered as sprawl by some orgs.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-6/policy",
+      "name": "Enforce Consistent Filename Convention",
+      "path": "./recipe-6/policy.rego",
+      "export": "./recipe-6/policy",
+      "code": "package cloudsmith\ndefault match := false  # Assume the package is fine unless we find a problem\nmatch if count(reason) > 0  # Match the policy only if we generate at least one reason\n\nreason contains msg if {\n  pkg := input.v0[\"package\"]\n\n  # Focus only on files that start with 'h11-'\n  startswith(pkg.filename, \"h11-\")\n\n  # Ensure they match semantic versioning pattern\n  not regex.match(\"^h11-[0-9]+\\\\.[0-9]+\\\\.[0-9]+\\\\.(tar\\\\.gz|whl)$\", pkg.filename)\n\n  # Give a descriptive reason if not\n  msg := sprintf(\"Filename '%s' does not match required SemVer pattern\", [pkg.filename])\n}\n",
+      "description": "Validate filename matches a semantic or naming pattern where `MAJOR`.`MINOR`, and `PATCH` are all numeric.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-7/policy",
+      "name": "Approved Upstreams based on Tags",
+      "path": "./recipe-7/policy.rego",
+      "export": "./recipe-7/policy",
+      "code": "package cloudsmith\n\nimport rego.v1\n\ndefault match := false\n\napproved := \"approved\"\nupstream := \"upstream\"\n#allowed_repos := {\"test-repo\"}  # Define your set of allowed repositories\n\nmatch if {\n    not has_approved_tag\n    has_upstream_tag\n#    is_in_allowed_repo\n}\n\nhas_upstream_tag if {\n    some _, type in input.v0[\"package\"].tags\n    some tag in type\n    tag = upstream\n}\n\nhas_approved_tag if {\n    some _, type in input.v0[\"package\"].tags\n    some tag in type\n    tag = approved\n}\n",
+      "description": "This policy approves packages based on the specified upstream source.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-8/policy",
+      "name": "CVSS with Fix Available",
+      "path": "./recipe-8/policy.rego",
+      "export": "./recipe-8/policy",
+      "code": "package cloudsmith\n\ndefault match := false\n\n# high or critical CVSS threshold\nmax_cvss_score := 7\n\n# targeted repository\ntarget_repository := \"acme-repo-one\"\n\n# CVEs to ignore\nignored_cves := {\"CVE-2023-45853\"}\n\n# Main match condition\nmatch if {\n\tinput.v0.repository.name == target_repository\n\t# some vulnerability in input.v0.security_scan.Vulnerabilities (deprecated)\n    \tsome target in input.v0.security_scan\n    \tsome vulnerability in target.Vulnerabilities\n\tvulnerability.FixedVersion\n\tvulnerability.Status == \"fixed\"\n\tnot ignored_cve(vulnerability)\n\texceeded_max_cvss(vulnerability)\n}\n\n# Rule to check CVSS score exceeding threshold\nexceeded_max_cvss(vulnerability) if {\n\tsome key, val in vulnerability.CVSS\n\tval.V3Score > max_cvss_score\n}\n\n# Rule to check if CVE is ignored\nignored_cve(vulnerability) if {\n\tvulnerability.VulnerabilityID in ignored_cves\n}\n",
+      "description": "This policy is designed to match packages in a specific repository (acme-repo-one) that have high or critical with a Fixed version available, excluding specific known CVEs. ",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-9/policy",
+      "name": "Time-based CVSS Policy",
+      "path": "./recipe-9/policy.rego",
+      "export": "./recipe-9/policy",
+      "code": "package cloudsmith\n\n# Default match rule\ndefault match := false\n\n# Define maximum CVSS score threshold\nmax_cvss_score := 7\n\n# Define time-based policy threshold (Vulnerabilities older than X days)\nolder_than_days := -30\n\n# Define the target repository\ntarget_repository := \"acme-repo-one\"\n\n# Define CVEs to ignore\nignored_cves := {\"CVE-2023-45853\", \"CVE-2024-12345\"}\n\n# Main match condition\nmatch if {\n    in_target_repository\n    count(reason) != 0\n}\n\n# Check if the package belongs to the specified repository\nin_target_repository if {\n    input.v0.repository.name == target_repository\n}\n\n# Generate reasons for matching vulnerabilities\nreason contains msg if {\n    # Loop through all vulnerabilities\n    # some vulnerability in input.v0.security_scan.Vulnerabilities (deprecated)\n    some target in input.v0.security_scan\n    some vulnerability in target.Vulnerabilities\n   \n    # Ignore specific CVEs\n    not ignored_cve(vulnerability)\n\n    # Only consider vulnerabilities with a fixed version\n    vulnerability.FixedVersion\n    vulnerability.Status == \"fixed\"\n\n    # Ensure the CVSS score exceeds the threshold\n    some _, val in vulnerability.CVSS\n    val.V3Score >= max_cvss_score\n\n    # Apply time-based filtering (only consider vulnerabilities older than X days)\n    t := time.add_date(time.now_ns(), 0, 0, older_than_days)\n    published_date := time.parse_rfc3339_ns(vulnerability.PublishedDate)\n    published_date <= t\n\n    # Message for logging the reason\n    msg := sprintf(\n        \"CVSS Score: %v | Package: %v | Vulnerability: %v | Reason: %v\",\n        [val.V3Score, input.v0[\"package\"].name, vulnerability.VulnerabilityID, vulnerability.Description]\n    )\n}\n\n# Rule to check if CVE is ignored\nignored_cve(vulnerability) if {\n    vulnerability.VulnerabilityID in ignored_cves\n}\n",
+      "description": "This policy is designed to detect and flag packages in a specific repo that contain serious, outdated, but fixed vulnerabilities.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-10/policy",
+      "name": "Recipe 10",
+      "path": "./recipe-10/policy.rego",
+      "export": "./recipe-10/policy",
+      "code": "package cloudsmith\ndefault match := false\n\nmax_epss := 0.0001\ntarget_repository := \"acme-corporation\"\nignored_cves := {\"CVE-2023-45853\"}\nmatch if count(reason) > 0\n\nreason contains msg if {\n    input.v0[\"repository\"][\"name\"] == target_repository\n    some vuln in input.v0[\"vulnerabilities\"]\n\n    vuln[\"patched_versions\"]\n    vuln[\"severity\"] == \"HIGH\"\n    not ignored_cve(vuln)\n\n    # EPSS score exceeds threshold\n    vuln[\"epss_score\"]\n    vuln[\"epss_score\"] > max_epss\n\n    msg := sprintf(\n        \"High severity vulnerability %s has EPSS score %.6f (threshold %.6f)\",\n        [vuln[\"VulnerabilityID\"], vuln[\"epss_score\"], max_epss]\n    )\n}\n\nignored_cve(vuln) if {\n    vuln[\"VulnerabilityID\"] in ignored_cves\n}\n",
+      "description": "",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-11/policy",
+      "name": "Architecture-specific allow list",
+      "path": "./recipe-11/policy.rego",
+      "export": "./recipe-11/policy",
+      "code": "package cloudsmith\n\ndefault match := false\n\nmatch if count(reason) > 0\n\nreason contains msg if {\n  some arch in input.v0.package.architectures\n  arch.name != \"amd64\"\n  msg := sprintf(\"Architecture '%s' is not permitted. Only 'amd64' is allowed.\", [arch.name])\n}\n",
+      "description": "This policy only allows `amd64` architecture packages and blocks others like `arm64`.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-12/policy",
+      "name": "Block Package XYZ if version < 0.16.0",
+      "path": "./recipe-12/policy.rego",
+      "export": "./recipe-12/policy",
+      "code": "package cloudsmith\n\ndefault match := false\n\nmatch if count(reason) > 0\n\nreason contains msg if {\n  pkg := input.v0[\"package\"]\n  pkg.name == \"h11\"\n\n  # Parse versions using Cloudsmith's semantic version comparator\n  semver.compare(pkg.version, \"0.16.0\") == -1\n\n  msg := sprintf(\"Package 'h11' version '%s' is older than 0.16.0\", [pkg.version])\n}\n",
+      "description": "This policy matches any `h11` packages with a version older than `0.16.0`",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-13/policy",
+      "name": "Recipe 13",
+      "path": "./recipe-13/policy.rego",
+      "export": "./recipe-13/policy",
+      "code": "package cloudsmith\ndefault match := false\nmatch if count(reason) > 0\n\nreason contains msg if {\n  pkg := input.v0[\"package\"]\n  startswith(pkg.version, \"0.\")\n  msg := sprintf(\"Package version '%s' is considered pre-1.0 and disallowed\", [pkg.version])\n}\n",
+      "description": "",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-14/policy",
+      "name": "Recipe 14",
+      "path": "./recipe-14/policy.rego",
+      "export": "./recipe-14/policy",
+      "code": "package cloudsmith\ndefault match := false\n# --- Config ---\ntarget_name := \"requests\"\ntarget_versions := {\"2.6.0\"}\n# --- Match when the package is the target and version is exactly banned ---\nmatch if {\n  pkg := input.v0.package\n  pkg.name == target_name\n  version_matches(pkg)\n}\n# Accept either .version or .version_orig (two simple rules = logical OR)\nversion_matches(pkg) if {\n  v := pkg.version\n  v in target_versions\n}\nversion_matches(pkg) if {\n  pkg.version_orig\n  v := pkg.version_orig\n  v in target_versions\n}\n",
+      "description": "",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-15/policy",
+      "name": "Block specifically based on CVEs",
+      "path": "./recipe-15/policy.rego",
+      "export": "./recipe-15/policy",
+      "code": "package cloudsmith\n\ndefault match := false\n\n# --- Blocklist (add more CVE IDs as needed) ---\nbanned_cves := {\n  \"CVE-2018-18074\"\n  # ,\"CVE-2023-32681\", \"CVE-2024-35195\", \"CVE-2024-47081\", ...\n}\n\n# Shape 1: input.v0.vulnerabilities[*].identifier\nmatch if {\n  some v in input.v0.vulnerabilities\n  v.identifier in banned_cves\n}\n\n# Shape 2: input.v0.security_scan[*].Vulnerabilities[*].VulnerabilityID\nmatch if {\n  some scan in input.v0.security_scan\n  some vuln in scan.Vulnerabilities\n  vuln.VulnerabilityID in banned_cves\n}\n",
+      "description": "Again, the Python package `requests` version `2.6.0` has the known vulnerability `CVE-2018-18074`: We have commented out the other CVEs in this policy, but feel free remove those comments and add additional CVEs as a list.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-16/policy",
+      "name": "Suspicious Package Upload Window",
+      "path": "./recipe-16/policy.rego",
+      "export": "./recipe-16/policy",
+      "code": "package cloudsmith\nimport rego.v1\n\ndefault match := false\n\n# Block window (UTC)\nstart_hour := 9   # inclusive\nend_hour   := 11  # exclusive\n\nmatch if count(reason) > 0\n\nreason[msg] if {\n  pkg := input.v0[\"package\"]\n  ts_ns := time.parse_rfc3339_ns(pkg.uploaded_at)  # ns since epoch\n\n  day_ns := ts_ns % 86400000000000      # ns into UTC day (24*60*60*1e9)\n  hour   := floor(day_ns / 3600000000000)   # ns per hour (3.6e12)\n\n  hour >= start_hour\n  hour < end_hour\n\n  msg := sprintf(\n    \"Package uploaded between %02d:00 and %02d:00 UTC (upload hour %02d:00).\",\n    [start_hour, end_hour, hour],\n  )\n}\n",
+      "description": "Assuming your organization don't expect packages to be uploaded or modified at specific times, the below policy can detect package uploads at `9am-11am UTC` - regardless of the package name.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-17/policy",
+      "name": "Tag-Based Exception Policy",
+      "path": "./recipe-17/policy.rego",
+      "export": "./recipe-17/policy",
+      "code": "package cloudsmith\nimport rego.v1\ndefault match := false\n\nexempt_tag := \"exempt\"\n\nmatch if {\n  pkg := input.v0[\"package\"]\n  some t in pkg.tags\n  t.name == exempt_tag\n}\n",
+      "description": "Use this policy when you need a quick, time-boxed exception. For example, policy can quarantine by severity; where a separate terminal exemption policy matches if a package has an exempt tag and stops further evaluation.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-18/policy",
+      "name": "Exact allowlist exception policy with CVSS ceiling",
+      "path": "./recipe-18/policy.rego",
+      "export": "./recipe-18/policy",
+      "code": "package cloudsmith\nimport rego.v1\n\ndefault match := false\n\n# ---- Config: package -> set of versions you permit\nallow_exact := {\n  \"flowise\": {\"3.0.5\"},\n  \"requests\": {\"2.25.1\"},\n}\n\n# Exempt only if NO CVSS score is greater than this value (set 10.0 to ignore)\nmax_allowed_cvss := 9.0\n\n# ---- Helpers\npkg := input.v0[\"package\"]\npkg_name := pkg.name\npkg_version := pkg.version\n\n# Versions allowed for this package (empty if none)\ndefault allowed_versions := {}\nallowed_versions := s if { allow_exact[pkg_name] = s }\n\nis_exact_allowed if { pkg_version in allowed_versions }\n\n# Collect CVSS scores from both shapes EPM provides\ncvss_scores[s] if {\n  v := input.v0.vulnerabilities[_]\n  some _, c in v.cvss\n  c.V3Score != null\n  s := c.V3Score\n}\ncvss_scores[s] if {\n  s0 := input.v0.security_scan[_]\n  vuln := s0.Vulnerabilities[_]\n  some _, c2 in vuln.CVSS\n  c2.V3Score != null\n  s := c2.V3Score\n}\n\nceiling_hit if { some s in cvss_scores; s > max_allowed_cvss }\n\n# ---- Decision: match=true means “exempt”\nexempt_ok if { is_exact_allowed; not ceiling_hit }\n\nreason contains msg if {\n  exempt_ok\n  msg := sprintf(\"Exempt: %s %s (no CVSS > %.1f)\", [pkg_name, pkg_version, max_allowed_cvss])\n}\n\nmatch if { exempt_ok }\n",
+      "description": "Use when you want tight control per version, but still prevent exemptions if a CVSS exceeds a ceiling.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-19/policy",
+      "name": "Malware advisory",
+      "path": "./recipe-19/policy.rego",
+      "export": "./recipe-19/policy",
+      "code": "package cloudsmith\ndefault match := false\n\nmatch if count(malicious_packages) > 0\n\nmalicious_packages := [vulnerability.id |\n\tsome vulnerability in input.v0.osv\n\tstartswith(vulnerability.id, \"MAL-\")\n]",
+      "description": "Use when you want to match based on malware advisory.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-20/policy",
+      "name": "npm last published date",
+      "path": "./recipe-20/policy.rego",
+      "export": "./recipe-20/policy",
+      "code": "package cloudsmith\n\ndefault match := false\n\n# A package is matched if its upstream publish date is within the past N days.\nwithin_past_days := 14\nsupported_formats := {\"npm\"}\n\nmatch if count(reason) != 0\n\nreason contains msg if {\n    pkg := input.v0[\"package\"]\n    within_past_days_date := time.add_date(time.now_ns(), 0, 0, 0 - within_past_days)\n    publish_date := time.parse_rfc3339_ns(pkg.upstream_metadata.published_at)\n\n    # Match if the publish date comes after the date of the set number of days ago.\n    publish_date >= within_past_days_date\n    pkg.format in supported_formats\n\n    msg := sprintf(\"Package upstream publish date is %v (falls within the past %v days)\", [pkg.upstream_metadata.published_at, within_past_days])\n}",
+      "description": "Use when you want to match based on the npm last published date on npm upstream.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "recipe-21/policy",
+      "name": "Exact blocklist",
+      "path": "./recipe-21/policy.rego",
+      "export": "./recipe-21/policy",
+      "code": "package cloudsmith\nimport rego.v1\n\ndefault match := false\n\n#\n# ---- Config: external exact-match list -------------------------\n#\n# Each entry is \"<format>:<name>:<version>\"\n# e.g. npm:@art-ws/common:2.0.28\n#\nmatch_exact := {\n  \"npm:@ahmedhfarag/ngx-perfect-scrollbar:20.0.20\",\n  \"npm:@art-ws/common:2.0.28\",\n  \"npm:@crowdstrike/commitlint:8.1.1\",\n  \"npm:@ctrl/ngx-codemirror:7.0.1\",\n  # ... rest of the list here\n}\n\n#\n# ---- Package context -------------------------------------------\n#\n\npkg         := input.v0[\"package\"]\npkg_name    := pkg.name\npkg_version := pkg.version\npkg_format  := pkg.format\n\npkg_key := sprintf(\"%s:%s:%s\", [pkg_format, pkg_name, pkg_version])\n\nis_match_exact if {\n  pkg_key in match_exact\n}\n\n#\n# ---- Decision --------------------------------------------------\n#\n\nreason contains msg if {\n  is_match_exact\n  msg := sprintf(\"Matched external suspicious list entry: %s\", [pkg_key])\n}\n\nmatch if {\n  is_match_exact\n}\n",
+      "description": "This policy lets you maintain an exact deny list of suspicious or malicious packages across formats using the key pattern.",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "huggingface-recipes/model_card",
+      "name": "Policy based on Hugging Face model card data",
+      "path": "./huggingface-recipes/model_card.rego",
+      "export": "./huggingface-recipes/model_card",
+      "code": "package cloudsmith\n\nimport rego.v1\n\ndefault match := false\n\npkg := input.v0.package\n\nhf_pkg if \"huggingface\" == pkg.format\n\nmatch if {\n    hf_pkg\n    \"HuggingFaceTB/smollm-corpus\" in pkg.card.datasets\n} \n",
+      "description": "",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "huggingface-recipes/risky_files",
+      "name": "Block Hugging Face models with risky file formats",
+      "path": "./huggingface-recipes/risky_files.rego",
+      "export": "./huggingface-recipes/risky_files",
+      "code": "package cloudsmith\n\nimport rego.v1\n\ndefault match := false\n\npkg := input.v0.package\n\nhf_pkg if \"huggingface\" == pkg.format\n\n# Upstream packages are fetched by a system user\nis_upstream_pkg if input.v0.package.uploader.slug == \"cloudsmith-o6v\"\n\n# Formats and their extensions\n# H5 (.h5, .hdf5)\n# Paddle (.pdparams)\n# PyTorch (.bin, .pt, .pth, .ckpt)\n# Pickle (.pkl, .dat)\n# Numpy (.npy)\n# JobLib (.joblib)\n# Dill (.dill)\n# SavedModel (.pb)\n# GGUF (.gguf)\n\nrisky_file_extensions := {\".h5\", \".hdf5\", \".pdparams\", \".keras\", \".bin\", \".pkl\", \".dat\", \".pt\", \".pth\", \".ckpt\", \".npy\", \".joblib\", \".dill\", \".pb\", \".gguf\", \".zip\",}\n\nmatch if {\n    hf_pkg\n    is_upstream_pkg\n    some file in pkg.files\n    file.file_extension in risky_file_extensions \n} ",
+      "description": "",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "huggingface-recipes/security_scan",
+      "name": "Block Hugging Face models with unsafe files found via a security scan",
+      "path": "./huggingface-recipes/security_scan.rego",
+      "export": "./huggingface-recipes/security_scan",
+      "code": "package cloudsmith\n\nimport rego.v1\n\ndefault match := false\n\n# Upstream packages are fetched by a system user\nis_upstream_pkg if input.v0.package.uploader.slug == \"cloudsmith-o6v\"\n\n# Ensure the security scans have been completed and none of the scans\n# find any problematic content.\n# Users an incremental rule to express OR.\nincomplete_or_unsafe if {\n    input.v0.model_security.availability != \"COMPLETE\"\n}\n\nincomplete_or_unsafe if {\n    input.v0.model_security.scan_summary != \"SAFE\"\n}\n\nmatch if {\n    \"huggingface\" == input.v0.package.format\n    is_upstream_pkg\n    incomplete_or_unsafe\n}\n",
+      "description": "",
+      "tags": [],
+      "author": "Cloudsmith"
+    },
+    {
+      "id": "huggingface-recipes/trusted_publishers",
+      "name": "Whitelist of trusted Hugging Face publishers",
+      "path": "./huggingface-recipes/trusted_publishers.rego",
+      "export": "./huggingface-recipes/trusted_publishers",
+      "code": "package cloudsmith\n\nimport rego.v1\n\ndefault match := false\n\n# Upstream packages are fetched by a system user\nis_upstream_pkg if input.v0.package.uploader.slug == \"cloudsmith-o6v\"\n\nverified_publishers := {\"amazon\", \"apple\", \"facebook\", \"FacebookAI\", \"google\", \"Intel\", \"microsoft\", \"openai\"}\n\npublisher := split(input.v0.package.name, \"/\")[0]\n\nmatch if {\n    \"huggingface\" == input.v0.package.format\n    is_upstream_pkg\n    publisher in verified_publishers\n}\n",
+      "description": "",
+      "tags": [],
+      "author": "Cloudsmith"
+    }
+  ]
+}
