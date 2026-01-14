@@ -566,8 +566,8 @@ cat <<EOF > payload.json
   "precedence": 1
 }
 EOF
+```
 
 ### Hugging Face recipes
 
 For policies relating to Hugging Face models and datasets, see [Hugging Face Recipes](https://github.com/cloudsmith-io/rego-recipes/blob/main/huggingface-recipes/README.md/).
-```
