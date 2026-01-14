@@ -1,2 +1,2 @@
 npm run generate-manifest
-git add package.json manifest.json
+git add manifest.json
