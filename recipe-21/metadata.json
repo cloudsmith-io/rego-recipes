@@ -1,0 +1,6 @@
+{
+  "name": "Exact blocklist",
+  "description": "This policy lets you maintain an exact deny list of suspicious or malicious packages across formats using the key pattern.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

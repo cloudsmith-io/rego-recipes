@@ -1,0 +1,6 @@
+{
+  "name": "Copyleft or restrictive OSS licenses",
+  "description": "This policy is designed to flag packages that use `copyleft` or `restrictive` open-source licenses, particularly those unsuitable for production use without legal review or approval.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

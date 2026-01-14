@@ -1,0 +1,6 @@
+{
+  "name": "Tag-Based Exception Policy",
+  "description": "Use this policy when you need a quick, time-boxed exception. For example, policy can quarantine by severity; where a separate terminal exemption policy matches if a package has an exempt tag and stops further evaluation.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

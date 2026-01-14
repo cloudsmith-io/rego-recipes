@@ -1,0 +1,6 @@
+{
+  "name": "Enforce Consistent Filename Convention",
+  "description": "Validate filename matches a semantic or naming pattern where `MAJOR`.`MINOR`, and `PATCH` are all numeric.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "CVSS with Fix Available",
+  "description": "This policy is designed to match packages in a specific repository (acme-repo-one) that have high or critical with a Fixed version available, excluding specific known CVEs. ",
+  "tags": [],
+  "author": "Cloudsmith"
+}

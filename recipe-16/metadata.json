@@ -1,0 +1,6 @@
+{
+  "name": "Suspicious Package Upload Window",
+  "description": "Assuming your organization don't expect packages to be uploaded or modified at specific times, the below policy can detect package uploads at `9am-11am UTC` - regardless of the package name.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

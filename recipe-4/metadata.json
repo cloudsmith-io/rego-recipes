@@ -1,0 +1,6 @@
+{
+  "name": "Quarantine Debug Builds",
+  "description": "This policy checks whether a package includes specific `debug`, `test`, or `temp` descriptors in the filename.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

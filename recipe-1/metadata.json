@@ -1,0 +1,6 @@
+{
+  "name": "Enforcing Signed Packages",
+  "description": "This policy enforces mandatory GPG/DSA signature checks on packages during their sync/import into Cloudsmith.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

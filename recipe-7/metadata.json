@@ -1,0 +1,6 @@
+{
+  "name": "Approved Upstreams based on Tags",
+  "description": "This policy approves packages based on the specified upstream source.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Time-based CVSS Policy",
+  "description": "This policy is designed to detect and flag packages in a specific repo that contain serious, outdated, but fixed vulnerabilities.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

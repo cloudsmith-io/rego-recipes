@@ -1,0 +1,6 @@
+{
+  "name": "Limit Tag Sprawl",
+  "description": "This policy checks whether a package already includes 5 or more assigned tags - considered as sprawl by some orgs.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

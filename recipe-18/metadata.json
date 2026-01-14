@@ -1,0 +1,6 @@
+{
+  "name": "Exact allowlist exception policy with CVSS ceiling",
+  "description": "Use when you want tight control per version, but still prevent exemptions if a CVSS exceeds a ceiling.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

@@ -1,0 +1,26 @@
+{
+  "model_card": {
+    "name": "Policy based on Hugging Face model card data",
+    "description": "",
+    "tags": [],
+    "author": "Cloudsmith"
+  },
+  "risky_files": {
+    "name": "Block Hugging Face models with risky file formats",
+    "description": "",
+    "tags": [],
+    "author": "Cloudsmith"
+  },
+  "security_scan": {
+    "name": "Block Hugging Face models with unsafe files found via a security scan",
+    "description": "",
+    "tags": [],
+    "author": "Cloudsmith"
+  },
+  "trusted_publishers": {
+    "name": "Whitelist of trusted Hugging Face publishers",
+    "description": "",
+    "tags": [],
+    "author": "Cloudsmith"
+  }
+}

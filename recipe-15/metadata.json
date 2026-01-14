@@ -1,0 +1,6 @@
+{
+  "name": "Block specifically based on CVEs",
+  "description": "Again, the Python package `requests` version `2.6.0` has the known vulnerability `CVE-2018-18074`: We have commented out the other CVEs in this policy, but feel free remove those comments and add additional CVEs as a list.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

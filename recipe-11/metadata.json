@@ -1,0 +1,6 @@
+{
+  "name": "Architecture-specific allow list",
+  "description": "This policy only allows `amd64` architecture packages and blocks others like `arm64`.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

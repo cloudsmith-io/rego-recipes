@@ -1,0 +1,6 @@
+{
+  "name": "Restricting Package Based on Tags",
+  "description": "This policy checks whether a package includes a specific `deprecated` tag and marks it as a match if it does.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

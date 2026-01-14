@@ -1,0 +1,6 @@
+{
+  "name": "npm last published date",
+  "description": "Use when you want to match based on the npm last published date on npm upstream.",
+  "tags": [],
+  "author": "Cloudsmith"
+}

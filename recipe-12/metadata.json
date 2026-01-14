@@ -1,0 +1,6 @@
+{
+  "name": "Block Package XYZ if version < 0.16.0",
+  "description": "This policy matches any `h11` packages with a version older than `0.16.0`",
+  "tags": [],
+  "author": "Cloudsmith"
+}
