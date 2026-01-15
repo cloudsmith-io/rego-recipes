@@ -4,7 +4,16 @@
   "description": "A curated collection of Enterprise Policy Management (EPM) recipes for Cloudsmith.",
   "scripts": {
     "generate-manifest": "node scripts/generate-manifest.cjs",
+    "test": "jest",
+    "test:unit": "jest scripts/__tests__/generate-manifest.test.js",
+    "test:integration": "jest scripts/__tests__/generate-manifest.integration.test.js",
     "prepare": "husky"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/scripts/__tests__/**/*.test.js"
+    ]
   },
   "exports": {
     "./manifest": {
@@ -23,16 +32,11 @@
     "type": "git",
     "url": "https://github.com/cloudsmith-io/rego-recipes.git"
   },
-  "keywords": [
-    "rego",
-    "policy",
-    "cloudsmith",
-    "epm",
-    "open-policy-agent"
-  ],
   "author": "Cloudsmith",
   "license": "MIT",
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "mock-fs": "^5.5.0"
   }
 }

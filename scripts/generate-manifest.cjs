@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+// @ts-nocheck
 const fs = require('fs');
 const path = require('path');
 
@@ -8,7 +9,13 @@ const manifestPath = path.join(rootDir, 'manifest.json');
 const packageJsonPath = path.join(rootDir, 'package.json');
 
 // Read package.json for version
-const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+let packageJson;
+try {
+  packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+} catch (error) {
+  console.error(`Error reading package.json: ${error.message}`);
+  process.exit(1);
+}
 
 // Recursively find all .rego files
 function findRegoFiles(dir, baseDir = dir) {
@@ -34,7 +41,7 @@ function findRegoFiles(dir, baseDir = dir) {
 
 const regoFiles = findRegoFiles(rootDir);
 
-// Sort files: recipe-N numerically first, then huggingface-recipes alphabetically
+// Sort files: recipe-N folders numerically first, then other folders alphabetically
 const sortedRegoFiles = regoFiles.sort((a, b) => {
   const aFolder = a.split(path.sep)[0];
   const bFolder = b.split(path.sep)[0];
@@ -49,11 +56,11 @@ const sortedRegoFiles = regoFiles.sort((a, b) => {
     return aNum - bNum;
   }
 
-  // Recipe comes before huggingface
+  // recipe-N folders come before other folders
   if (aIsRecipe && !bIsRecipe) return -1;
   if (!aIsRecipe && bIsRecipe) return 1;
 
-  // Both are huggingface: sort alphabetically
+  // Both are non-recipe folders: sort alphabetically
   return a.localeCompare(b);
 });
 
@@ -67,7 +74,14 @@ function loadMetadata(file) {
   if (folder.startsWith('recipe-')) {
     const metadataPath = path.join(rootDir, folder, 'metadata.json');
     if (fs.existsSync(metadataPath)) {
-      return JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+      try {
+        return JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+      } catch (error) {
+        console.warn(
+          `Warning: Invalid JSON in ${metadataPath}, skipping metadata`
+        );
+        return {};
+      }
     }
   }
 
@@ -75,8 +89,15 @@ function loadMetadata(file) {
   if (folder === 'huggingface-recipes') {
     const metadataPath = path.join(rootDir, folder, 'metadata.json');
     if (fs.existsSync(metadataPath)) {
-      const allMetadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-      return allMetadata[fileName] || {};
+      try {
+        const allMetadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+        return allMetadata[fileName] || {};
+      } catch (error) {
+        console.warn(
+          `Warning: Invalid JSON in ${metadataPath}, skipping metadata`
+        );
+        return {};
+      }
     }
   }
 
@@ -84,31 +105,41 @@ function loadMetadata(file) {
 }
 
 // Build manifest
-const recipes = sortedRegoFiles.map((file) => {
-  const parsedPath = path.parse(file);
-  const id = file.replace('.rego', '').replace(/\\/g, '/');
-  const exportKey = `./${id}`;
+const recipes = sortedRegoFiles
+  .map((file) => {
+    try {
+      const parsedPath = path.parse(file);
+      const id = file.replace('.rego', '').replace(/\\/g, '/');
+      const exportKey = `./${id}`;
+      const fileName = parsedPath.name;
 
-  const parts = file.split(path.sep);
-  const folder = parts[0];
-  const fileName = parsedPath.name;
+      // Read the .rego file contents
+      const fullPath = path.join(rootDir, file);
+      const code = fs.readFileSync(fullPath, 'utf8');
 
-  // Read the .rego file contents
-  const fullPath = path.join(rootDir, file);
-  const code = fs.readFileSync(fullPath, 'utf8');
+      // Skip empty .rego files
+      if (!code || code.trim().length === 0) {
+        console.warn(`Warning: Skipping ${file} (empty file)`);
+        return null;
+      }
 
-  // Load metadata if available
-  const metadata = loadMetadata(file);
+      // Load metadata if available
+      const metadata = loadMetadata(file);
 
-  return {
-    id: id,
-    name: metadata.name || fileName.replace(/_/g, ' ').replace(/-/g, ' '),
-    path: `./${file.replace(/\\/g, '/')}`,
-    export: exportKey,
-    code: code,
-    ...metadata, // Spread any additional metadata fields
-  };
-});
+      return {
+        id: id,
+        name: metadata.name || fileName.replace(/_/g, ' ').replace(/-/g, ' '),
+        path: `./${file.replace(/\\/g, '/')}`,
+        export: exportKey,
+        code: code,
+        ...metadata,
+      };
+    } catch (error) {
+      console.warn(`Warning: Failed to process ${file}: ${error.message}`);
+      return null;
+    }
+  })
+  .filter((recipe) => recipe !== null); // Omit failed recipes
 
 const manifest = {
   version: packageJson.version,
