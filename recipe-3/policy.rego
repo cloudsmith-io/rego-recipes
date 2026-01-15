@@ -102,7 +102,7 @@ reason contains msg if {
     match
     lic := input.v0.package.license.oss_license.spdx_identifier
     msg := sprintf(
-        "Copyleft license detected (%s). Package blocked/quarantined per license policy.",
+        "Copyleft license detected (%s).",
         [lic],
     )
 }
