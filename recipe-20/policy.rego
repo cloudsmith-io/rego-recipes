@@ -4,7 +4,7 @@ default match := false
 
 # A package is matched if its upstream publish date is within the past N days.
 within_past_days := 14
-supported_formats := {"npm"}
+supported_formats := {"npm", "python"}
 
 match if count(reason) != 0
 
