@@ -12,7 +12,7 @@ verified_publishers := {"amazon", "apple", "facebook", "FacebookAI", "google", "
 publisher := split(input.v0.package.name, "/")[0]
 
 match if {
-    "huggingface" == input.v0.package.format
-    is_upstream_pkg
-    publisher in verified_publishers
+	"huggingface" == input.v0.package.format
+	is_upstream_pkg
+	publisher in verified_publishers
 }

@@ -22,11 +22,11 @@ is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-o6v"
 # SavedModel (.pb)
 # GGUF (.gguf)
 
-risky_file_extensions := {".h5", ".hdf5", ".pdparams", ".keras", ".bin", ".pkl", ".dat", ".pt", ".pth", ".ckpt", ".npy", ".joblib", ".dill", ".pb", ".gguf", ".zip",}
+risky_file_extensions := {".h5", ".hdf5", ".pdparams", ".keras", ".bin", ".pkl", ".dat", ".pt", ".pth", ".ckpt", ".npy", ".joblib", ".dill", ".pb", ".gguf", ".zip"}
 
 match if {
-    hf_pkg
-    is_upstream_pkg
-    some file in pkg.files
-    file.file_extension in risky_file_extensions 
-} 
+	hf_pkg
+	is_upstream_pkg
+	some file in pkg.files
+	file.file_extension in risky_file_extensions
+}

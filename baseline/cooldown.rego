@@ -9,15 +9,15 @@ within_past_days := 3
 match if count(reason) > 0
 
 reason[msg] if {
-  pkg.upstream_metadata.published_at != null
+	pkg.upstream_metadata.published_at != null
 
-  publish_date := time.parse_rfc3339_ns(pkg.upstream_metadata.published_at)
-  cutoff := time.add_date(time.now_ns(), 0, 0, 0 - within_past_days)
+	publish_date := time.parse_rfc3339_ns(pkg.upstream_metadata.published_at)
+	cutoff := time.add_date(time.now_ns(), 0, 0, 0 - within_past_days)
 
-  publish_date >= cutoff
+	publish_date >= cutoff
 
-  msg := sprintf(
-    "Package published within last %v days — applying cooldown",
-    [within_past_days],
-  )
+	msg := sprintf(
+		"Package published within last %v days — applying cooldown",
+		[within_past_days],
+	)
 }
