@@ -2,21 +2,19 @@ package cloudsmith
 
 default match := false
 
-#
-# Explicit exemption allowlist
-# Format: "<format>:<name>:<version>"
-#
+pkg := input.v0.package
 
 allowlist := {
 	"python:example-lib:1.2.3",
 	"npm:example-ui:4.5.6",
 }
 
-pkg := input.v0.package
-
 pkg_key := sprintf("%s:%s:%s", [pkg.format, pkg.name, pkg.version])
 
 match if {
+	pkg.format != null
+	pkg.name != null
+	pkg.version != null
 	pkg_key in allowlist
 }
 
