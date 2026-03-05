@@ -84,7 +84,8 @@ A recommended precedence pattern for baseline deployments is:
 3. License policy (tagging or governance)
 4. High-risk vulnerability policy (quarantine based on thresholds)
 5. Exact allowlist exemption (explicit override)
-6. Malware block (final quarantine safeguard)
+6. Exact blocklist (explicit deny)
+7. Malware block (final quarantine safeguard)
 
 All matched policy actions are applied within a single transaction.  
 The package state visible to users reflects the final committed result.
