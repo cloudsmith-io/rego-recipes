@@ -1,7 +1,5 @@
 package cloudsmith
 
-import rego.v1
-
 default match := false
 
 # Upstream packages are fetched by a system user
