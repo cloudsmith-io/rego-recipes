@@ -35,15 +35,15 @@ npm install github:cloudsmith-io/rego-recipes#abc1234
 
 ```typescript
 import {
-  baselineCooldown,
   baselineMalwareBlock,
+  baselineHighRiskVulnerability,
   allPolicies,
 } from '@cloudsmith/rego-recipes';
 
 // Access individual policy
-console.log(baselineCooldown.name); // "cooldown"
-console.log(baselineCooldown.path); // "baseline/cooldown.rego"
-console.log(baselineCooldown.content); // The raw .rego file content
+console.log(baselineMalwareBlock.name); // "malware-block"
+console.log(baselineMalwareBlock.path); // "baseline/malware-block.rego"
+console.log(baselineMalwareBlock.content); // The raw .rego file content
 
 // Use in policy management UI
 function displayPolicy(policy) {
@@ -53,19 +53,6 @@ function displayPolicy(policy) {
     content: policy.content,
   };
 }
-```
-
-### Importing Raw .rego Files
-
-For bundlers that support asset imports (Webpack, Vite, etc.):
-
-```typescript
-// Direct import of any .rego file from any directory
-import cooldownRego from '@cloudsmith/rego-recipes/baseline/cooldown.rego';
-import modelCardRego from '@cloudsmith/rego-recipes/advanced/huggingface-recipes/model_card.rego';
-
-// Use in your application
-const policyContent: string = cooldownRego;
 ```
 
 ### React Component Example
@@ -99,13 +86,13 @@ All policy files from `baseline/`, `advanced/`, and `legacy/` directories are ex
 
 ### Baseline Policies
 
-- `baselineCooldownRestore` - baseline/cooldown-restore.rego
-- `baselineCooldown` - baseline/cooldown.rego
 - `baselineExactAllowlistExemption` - baseline/exact-allowlist-exemption.rego
 - `baselineExactBlocklist` - baseline/exact-blocklist.rego
 - `baselineHighRiskVulnerability` - baseline/high-risk-vulnerability.rego
 - `baselineLicenseCompliance` - baseline/license-compliance.rego
 - `baselineMalwareBlock` - baseline/malware-block.rego
+- `baselinePackageAgeQuarantine` - baseline/package-age-quarantine.rego
+- `baselinePackageAgeRestore` - baseline/package-age-restore.rego
 
 ### Advanced Policies
 
@@ -184,14 +171,12 @@ npm run check
 
 When installed from GitHub, the package includes:
 
-- `baseline/` - All baseline policy .rego files
-- `advanced/` - All advanced policy .rego files
-- `dist/` - Generated JavaScript exports (built automatically)
+- `dist/` - Generated JavaScript exports with inlined .rego content (built automatically)
+- `baseline/` - All baseline policy .rego files (source files)
+- `advanced/` - All advanced policy .rego files (source files)
+- `legacy/` - All legacy policy .rego files (source files, deprecated)
 - `package.json` - Package metadata
-- `README.md` - Main repository documentation
-- `AGENTS.md` - Style guide and linting rules
-
-**Note:** The `legacy/` directory and development files are excluded via `.npmignore`.
+- `NPM.md` - Package usage documentation
 
 ---
 
@@ -225,13 +210,6 @@ If the package fails to build on installation:
 1. Ensure Node.js >= 18.0.0 is installed
 2. Check that the `scripts/build.js` ran successfully
 3. Verify `dist/` directory was created with `index.js` and `index.d.ts`
-
-### Import assertions not supported
-
-If you get errors about import assertions (`assert { type: 'text' }`), ensure you're using:
-
-- Node.js >= 18.0.0
-- A modern bundler (Webpack 5+, Vite, etc.)
 
 ---
 
