@@ -6,9 +6,9 @@ pkg := input.v0.package
 
 within_past_days := 3
 
-match if cooldown_needed
+match if above_minimum_release_age
 
-cooldown_needed if {
+above_minimum_release_age if {
 	pkg.upstream_metadata != null
 	pkg.upstream_metadata.published_at != null
 
@@ -17,13 +17,13 @@ cooldown_needed if {
 	days_ago := 0 - within_past_days
 	cutoff := time.add_date(time.now_ns(), 0, 0, days_ago)
 
-	publish_date >= cutoff
+	publish_date < cutoff
 }
 
 reason[msg] if {
-	cooldown_needed
+	above_minimum_release_age
 	msg := sprintf(
-		"Package published within last %v days — applying cooldown",
+		"Package older than %v days — meets minimum release age",
 		[within_past_days],
 	)
 }
