@@ -70,9 +70,10 @@ function escapeTemplateString(content) {
 /**
  * Generate the main index.js module
  * @param {Array<{absolutePath: string, relativePath: string, name: string}>} policies
+ * @param {Record<string, Array<{absolutePath: string, relativePath: string, name: string}>>} policiesByDir
  * @returns {Promise<void>}
  */
-async function generateIndexJs(policies) {
+async function generateIndexJs(policies, policiesByDir) {
   const contentDeclarations = [];
   const exports = [];
 
@@ -103,6 +104,19 @@ ${contentDeclarations.join('\n\n')}
 
 ${exports.join('\n\n')}
 
+// Export policies by category
+export const baselinePolicies = [
+  ${policiesByDir.baseline?.map((p) => toSafeIdentifier(p.relativePath)).join(',\n  ') || ''},
+];
+
+export const advancedPolicies = [
+  ${policiesByDir.advanced?.map((p) => toSafeIdentifier(p.relativePath)).join(',\n  ') || ''},
+];
+
+export const legacyPolicies = [
+  ${policiesByDir.legacy?.map((p) => toSafeIdentifier(p.relativePath)).join(',\n  ') || ''},
+];
+
 // Export all policies as a collection
 export const allPolicies = [
   ${policies.map((p) => toSafeIdentifier(p.relativePath)).join(',\n  ')},
@@ -115,9 +129,10 @@ export const allPolicies = [
 /**
  * Generate the index.d.ts TypeScript definitions
  * @param {Array<{absolutePath: string, relativePath: string, name: string}>} policies
+ * @param {Record<string, Array<{absolutePath: string, relativePath: string, name: string}>>} policiesByDir
  * @returns {Promise<void>}
  */
-async function generateIndexDts(policies) {
+async function generateIndexDts(policies, policiesByDir) {
   const interfaces = [];
   const exports = [];
 
@@ -141,6 +156,15 @@ async function generateIndexDts(policies) {
 ${policyInterface}
 
 ${exports.join('\n')}
+
+/** Baseline policies collection */
+export const baselinePolicies: Policy[];
+
+/** Advanced policies collection */
+export const advancedPolicies: Policy[];
+
+/** Legacy policies collection (deprecated) */
+export const legacyPolicies: Policy[];
 
 /** All policies as a collection */
 export const allPolicies: Policy[];
@@ -178,10 +202,10 @@ async function build() {
 
   // Generate output files
   console.log('Generating dist/index.js...');
-  await generateIndexJs(allPolicies);
+  await generateIndexJs(allPolicies, policiesByDir);
 
   console.log('Generating dist/index.d.ts...');
-  await generateIndexDts(allPolicies);
+  await generateIndexDts(allPolicies, policiesByDir);
 
   console.log('\n✓ Build complete!\n');
 
