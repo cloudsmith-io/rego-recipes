@@ -1,7 +1,5 @@
 package cloudsmith
 
-import rego.v1
-
 default match := false
 
 pkg := input.v0.package
