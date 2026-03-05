@@ -23,8 +23,16 @@ jobs:
 
       - name: Format Check
         run: |
-          [ -d baseline ] && opa fmt --fail baseline || echo "No baseline folder"
-          [ -d advanced ] && opa fmt --fail advanced || echo "No advanced folder"
+          if [ -d baseline ]; then
+            opa fmt --fail baseline
+          else
+            echo "No baseline folder"
+          fi
+          if [ -d advanced ]; then
+            opa fmt --fail advanced
+          else
+            echo "No advanced folder"
+          fi
 
       - name: Validate Policies
         run: |
