@@ -38,7 +38,7 @@ These policies address common supply chain security requirements such as:
 - Malware blocking  
 - High-risk vulnerability control (CVSS / EPSS)  
 - License compliance  
-- Controlled cooldown workflows  
+- Workflows using package age  
 - Explicit allowlist and blocklist handling  
 
 If you are deploying EPM in a new workspace, start here.
@@ -82,8 +82,8 @@ All policies in this repository are designed to be non-terminal and composable.
 
 A recommended precedence pattern for baseline deployments is:
 
-1. Cooldown Restore (make eligible packages available again)
-2. Cooldown (time-based quarantine)
+1. Package age restore (make eligible packages available again)
+2. Packge age quarantine (time-based quarantine)
 3. License policy (tagging or governance)
 4. High-risk vulnerability policy (quarantine based on thresholds)
 5. Exact allowlist exemption (explicit override)
