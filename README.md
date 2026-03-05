@@ -51,7 +51,7 @@ These may include:
 - Base image origin enforcement  
 - SBOM-based controls  
 - Model governance policies  
-- Specialised workflow patterns  
+- Specialized workflow patterns  
 
 Advanced policies are production-ready but not universally required.
 
