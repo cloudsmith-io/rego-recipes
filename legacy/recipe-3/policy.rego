@@ -4,105 +4,106 @@ default match := false
 
 # GNU General Public License (GPL) variants
 gpl_licenses := {
-	"GPL-1.0-only",
-	"GPL-1.0-or-later",
-	"GPL-2.0",
-	"GPL-2.0-only",
-	"GPL-2.0-or-later",
-	"GPL-3.0",
-	"GPL-3.0-only",
-	"GPL-3.0-or-later",
+    "GPL-1.0-only",
+    "GPL-1.0-or-later",
+    "GPL-2.0",
+    "GPL-2.0-only",
+    "GPL-2.0-or-later",
+    "GPL-3.0",
+    "GPL-3.0-only",
+    "GPL-3.0-or-later",
 }
 
 # GNU Lesser General Public License (LGPL) variants
 lgpl_licenses := {
-	"LGPL-2.0",
-	"LGPL-2.0-only",
-	"LGPL-2.0-or-later",
-	"LGPL-2.1",
-	"LGPL-2.1-only",
-	"LGPL-2.1-or-later",
-	"LGPL-3.0",
-	"LGPL-3.0-only",
-	"LGPL-3.0-or-later",
+    "LGPL-2.0",
+    "LGPL-2.0-only",
+    "LGPL-2.0-or-later",
+    "LGPL-2.1",
+    "LGPL-2.1-only",
+    "LGPL-2.1-or-later",
+    "LGPL-3.0",
+    "LGPL-3.0-only",
+    "LGPL-3.0-or-later",
 }
 
 # GNU Affero General Public License (AGPL) variants
 agpl_licenses := {
-	"AGPL-1.0",
-	"AGPL-1.0-only",
-	"AGPL-1.0-or-later",
-	"AGPL-3.0",
-	"AGPL-3.0-only",
-	"AGPL-3.0-or-later",
+    "AGPL-1.0",
+    "AGPL-1.0-only",
+    "AGPL-1.0-or-later",
+    "AGPL-3.0",
+    "AGPL-3.0-only",
+    "AGPL-3.0-or-later",
 }
 
 # Mozilla Public License (MPL) variants
 mpl_licenses := {
-	"MPL-1.0",
-	"MPL-1.1",
-	"MPL-2.0",
+    "MPL-1.0",
+    "MPL-1.1",
+    "MPL-2.0",
 }
 
 # Common Development and Distribution License (CDDL) variants
 cddl_licenses := {
-	"CDDL-1.0",
-	"CDDL-1.1",
+    "CDDL-1.0",
+    "CDDL-1.1",
 }
 
 # Eclipse Public License (EPL) variants
 epl_licenses := {
-	"EPL-1.0",
-	"EPL-2.0",
+    "EPL-1.0",
+    "EPL-2.0",
 }
 
 # Open Software License (OSL) variants
 osl_licenses := {
-	"OSL-1.0",
-	"OSL-2.0",
-	"OSL-3.0",
+    "OSL-1.0",
+    "OSL-2.0",
+    "OSL-3.0",
 }
 
 # GNU Free Documentation License (GFDL) variants
 gfdl_licenses := {
-	"GFDL-1.1-only",
-	"GFDL-1.1-or-later",
-	"GFDL-1.2-only",
-	"GFDL-1.2-or-later",
-	"GFDL-1.3-only",
-	"GFDL-1.3-or-later",
+    "GFDL-1.1-only",
+    "GFDL-1.1-or-later",
+    "GFDL-1.2-only",
+    "GFDL-1.2-or-later",
+    "GFDL-1.3-only",
+    "GFDL-1.3-or-later",
 }
 
 # Creative Commons Share Alike (CC-BY-SA) variants
 cc_by_sa_licenses := {
-	"CC-BY-SA-1.0",
-	"CC-BY-SA-2.0",
-	"CC-BY-SA-2.5",
-	"CC-BY-SA-3.0",
-	"CC-BY-SA-4.0",
+    "CC-BY-SA-1.0",
+    "CC-BY-SA-2.0",
+    "CC-BY-SA-2.5",
+    "CC-BY-SA-3.0",
+    "CC-BY-SA-4.0",
 }
 
 # Other copyleft licenses
 other_copyleft_licenses := {
-	"QPL-1.0",
-	"Sleepycat",
-	"SSPL-1.0",
-	"copyleft-next-0.3.0",
+    "QPL-1.0",
+    "Sleepycat",
+    "SSPL-1.0",
+    "copyleft-next-0.3.0",
 }
 
 # Combined copyleft license set
-copyleft := ((((((((gpl_licenses | lgpl_licenses) | agpl_licenses) | mpl_licenses) | cddl_licenses) | epl_licenses) | osl_licenses) | gfdl_licenses) | cc_by_sa_licenses) | other_copyleft_licenses
+copyleft := gpl_licenses | lgpl_licenses | agpl_licenses | mpl_licenses | cddl_licenses | epl_licenses | osl_licenses | gfdl_licenses | cc_by_sa_licenses | other_copyleft_licenses
 
 # Main policy rule
 match if {
-	input.v0.package.license.oss_license.spdx_identifier in copyleft
+    input.v0.package.license.oss_license.spdx_identifier in copyleft
 }
 
 reason contains msg if {
-	match
-	lic := input.v0.package.license.oss_license.spdx_identifier
-	msg := sprintf(
-		"Copyleft license detected (%s). Package blocked/quarantined per license policy.",
-		[lic],
-	)
+    match
+    lic := input.v0.package.license.oss_license.spdx_identifier
+    msg := sprintf(
+        "Copyleft license detected (%s). Package blocked/quarantined per license policy.",
+        [lic],
+    )
 }
+
