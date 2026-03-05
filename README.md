@@ -22,9 +22,12 @@ These policies are intended to be readable, predictable, and suitable for enterp
 ---
 
 ## Repository Structure
+
+```
 baseline/
 advanced/
 legacy/
+```
 
 ### baseline/
 
