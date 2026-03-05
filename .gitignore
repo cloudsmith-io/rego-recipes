@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build output (auto-generated on npm install)
+dist/
+
+# npm
+npm-debug.log*
+*.tgz
+
+# macOS
+.DS_Store
+
+# Editor directories
+.vscode/
+.idea/
