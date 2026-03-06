@@ -1,3 +1,6 @@
+# METADATA
+# title: Exact Blocklist
+# description: Block packages that are explicitly denylisted by format, name, and version
 package cloudsmith
 
 default match := false

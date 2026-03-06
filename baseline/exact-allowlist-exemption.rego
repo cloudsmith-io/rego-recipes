@@ -1,3 +1,6 @@
+# METADATA
+# title: Exact Allowlist Exemption
+# description: Approve packages that are explicitly allowlisted by format, name, and version
 package cloudsmith
 
 default match := false

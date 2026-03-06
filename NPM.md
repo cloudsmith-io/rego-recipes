@@ -26,6 +26,7 @@ import {
   baselineMalwareBlock,
   baselinePolicies,
   allPolicies,
+  type Policy,
 } from '@cloudsmith/rego-recipes';
 
 // Access individual policy
@@ -33,8 +34,13 @@ console.log(baselineMalwareBlock.content); // The raw .rego file content
 
 // Use collections
 baselinePolicies.forEach((policy) => {
-  console.log(policy.name, policy.path, policy.content);
+  console.log(policy.title, policy.path, policy.content);
 });
+
+// Use the Policy type
+function displayPolicy(policy: Policy) {
+  return `${policy.title}: ${policy.description}`;
+}
 ```
 
 ---
@@ -71,13 +77,18 @@ baselinePolicies.forEach((policy) => {
 - `legacyPolicies` - All legacy policies (deprecated)
 - `allPolicies` - All policies
 
-### Policy Interface
+### TypeScript Types
+
+**`Policy`** - Interface for policy objects:
 
 ```typescript
+import { type Policy } from '@cloudsmith/rego-recipes';
+
+// Policy structure:
 interface Policy {
   id: string; // unique identifier (camelCase)
-  name: string; // filename without .rego extension
-  description: string; // policy description
+  title: string; // display title (from METADATA or sentence case filename)
+  description: string; // policy description (from METADATA or empty)
   path: string; // relative path from package root
   content: string; // raw .rego file content
 }

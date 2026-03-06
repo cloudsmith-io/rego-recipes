@@ -56,6 +56,16 @@ function toSafeIdentifier(path) {
 }
 
 /**
+ * Format a filename to sentence case
+ * @param {string} filename - Filename without extension (e.g., "malware-block")
+ * @returns {string} - Sentence case version (e.g., "Malware block")
+ */
+function formatFilenameToTitle(filename) {
+  const words = filename.split(/[-_]/).join(' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/**
  * Escape string content for use in JavaScript template literals
  * @param {string} content - Content to escape
  * @returns {string}
@@ -65,6 +75,42 @@ function escapeTemplateString(content) {
     .replace(/\\/g, '\\\\') // Escape backslashes
     .replace(/`/g, '\\`') // Escape backticks
     .replace(/\$/g, '\\$'); // Escape dollar signs
+}
+
+/**
+ * Extract metadata from METADATA comments in .rego file
+ * @param {string} content - The .rego file content
+ * @returns {{title: string, description: string}}
+ */
+function extractMetadata(content) {
+  const metadata = {
+    title: '',
+    description: '',
+  };
+
+  // Look for METADATA block at start of file
+  const metadataRegex = /^#\s*METADATA\s*\n((?:#.*\n)*)/m;
+  const match = content.match(metadataRegex);
+
+  if (!match) {
+    return metadata;
+  }
+
+  const metadataBlock = match[1];
+
+  // Extract title
+  const titleMatch = metadataBlock.match(/^#\s*title:\s*(.+)$/m);
+  if (titleMatch) {
+    metadata.title = titleMatch[1].trim();
+  }
+
+  // Extract description
+  const descMatch = metadataBlock.match(/^#\s*description:\s*(.+)$/m);
+  if (descMatch) {
+    metadata.description = descMatch[1].trim();
+  }
+
+  return metadata;
 }
 
 /**
@@ -84,6 +130,12 @@ async function generateIndexJs(policies, policiesByDir) {
     const regoContent = await readFile(policy.absolutePath, 'utf-8');
     const escapedContent = escapeTemplateString(regoContent);
 
+    // Extract metadata
+    const metadata = extractMetadata(regoContent);
+
+    // Use METADATA title or format filename as fallback
+    const title = metadata.title || formatFilenameToTitle(policy.name);
+
     contentDeclarations.push(
       `const ${identifier}Content = \`${escapedContent}\`;`,
     );
@@ -91,8 +143,8 @@ async function generateIndexJs(policies, policiesByDir) {
     exports.push(
       `export const ${identifier} = {
   id: '${identifier}',
-  name: '${policy.name}',
-  description: '',
+  title: '${escapeTemplateString(title)}',
+  description: '${escapeTemplateString(metadata.description)}',
   path: '${policy.relativePath}',
   content: ${identifier}Content,
 };`,
@@ -141,9 +193,9 @@ async function generateIndexDts(policies, policiesByDir) {
   const policyInterface = `export interface Policy {
   /** Unique identifier (camelCase version of path) */
   id: string;
-  /** The policy name (filename without .rego extension) */
-  name: string;
-  /** Policy description */
+  /** Display title (from METADATA or sentence case filename) */
+  title: string;
+  /** Policy description (from METADATA or empty string) */
   description: string;
   /** Relative path to the .rego file from package root */
   path: string;
