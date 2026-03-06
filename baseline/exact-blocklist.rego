@@ -1,5 +1,5 @@
 # METADATA
-# title: Exact Blocklist
+# title: Exact blocklist
 # description: Block packages that are explicitly denylisted by format, name, and version
 package cloudsmith
 

@@ -1,5 +1,5 @@
 # METADATA
-# title: Exact Allowlist Exemption
+# title: Exact allowlist exemption
 # description: Approve packages that are explicitly allowlisted by format, name, and version
 package cloudsmith
 
