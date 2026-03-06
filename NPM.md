@@ -77,6 +77,7 @@ baselinePolicies.forEach((policy) => {
 interface Policy {
   id: string; // unique identifier (camelCase)
   name: string; // filename without .rego extension
+  description: string; // policy description
   path: string; // relative path from package root
   content: string; // raw .rego file content
 }

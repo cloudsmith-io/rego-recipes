@@ -92,6 +92,7 @@ async function generateIndexJs(policies, policiesByDir) {
       `export const ${identifier} = {
   id: '${identifier}',
   name: '${policy.name}',
+  description: '',
   path: '${policy.relativePath}',
   content: ${identifier}Content,
 };`,
@@ -142,6 +143,8 @@ async function generateIndexDts(policies, policiesByDir) {
   id: string;
   /** The policy name (filename without .rego extension) */
   name: string;
+  /** Policy description */
+  description: string;
   /** Relative path to the .rego file from package root */
   path: string;
   /** The raw .rego file content as a string */
