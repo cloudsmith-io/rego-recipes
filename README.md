@@ -27,6 +27,14 @@ These policies are intended to be readable, predictable, and suitable for enterp
 baseline/
 advanced/
 legacy/
+exemptions/
+  allow.json
+  update_policy.py
+  templates/
+    allowlist.rego.tpl
+.github/workflows/
+  opa-lint.yml
+  apply-exemptions.yml
 ```
 
 ### baseline/
@@ -83,7 +91,7 @@ All policies in this repository are designed to be non-terminal and composable.
 A recommended precedence pattern for baseline deployments is:
 
 1. Package age restore (make eligible packages available again)
-2. Packge age quarantine (time-based quarantine)
+2. Package age quarantine (time-based quarantine)
 3. License policy (tagging or governance)
 4. High-risk vulnerability policy (quarantine based on thresholds)
 5. Exact allowlist exemption (explicit override)
@@ -95,6 +103,34 @@ The package state visible to users reflects the final committed result.
 
 For full EPM documentation, see:  
 https://docs.cloudsmith.com/supply-chain-security/epm
+
+---
+
+## Managing Exemptions (GitOps Workflow)
+
+The allowlist policy in `baseline/` supports a GitOps-based exemption workflow.
+Rather than editing policies manually, exemptions are stored in Git, reviewed via
+Pull Requests, and automatically applied to Cloudsmith on merge.
+
+### How it works
+
+1. Maintain an exemption list in the format `format:name:version`:
+
+```json
+[
+  "python:requests:2.6.4",
+  "npm:left-pad:1.3.0"
+]
+```
+
+2. Open a Pull Request for security/DevOps review.
+3. On merge, a CI step regenerates the allowlist Rego policy from the exemption list and uploads it to Cloudsmith via the API.
+
+### Why this approach
+
+EPM policies embed exemption data directly in Rego. Managing exemptions via Git provides auditability, an approval gate, rollback capability, and a scalable alternative to manual policy edits.
+
+The allowlist exemption policy should be placed at a higher precedence than the vulnerability policy (position 5 in the recommended ordering above) so that explicitly approved packages bypass security enforcement.
 
 ---
 
@@ -114,3 +150,4 @@ This repository is the single source of truth for:
 - Documentation examples
 - Secure baseline recommendations
 - Enterprise EPM enablement guidance
+
