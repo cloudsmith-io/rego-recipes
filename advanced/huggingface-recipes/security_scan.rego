@@ -17,7 +17,7 @@ incomplete_or_unsafe if {
 }
 
 match if {
-	"huggingface" == input.v0.package.format
+	input.v0.package.format == "huggingface"
 	is_upstream_pkg
 	incomplete_or_unsafe
 }
