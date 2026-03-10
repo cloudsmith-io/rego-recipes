@@ -1,0 +1,12 @@
+rules:
+  idiomatic:
+    directory-package-mismatch:
+      # All policies use `package cloudsmith` as required by the Cloudsmith EPM runtime
+      level: ignore
+    no-defined-entrypoint:
+      # Entrypoints are determined by the EPM system, not metadata annotations
+      level: ignore
+  style:
+    messy-rule:
+      # `default match := false` + `match if { ... }` is the required EPM policy interface
+      level: ignore
