@@ -2,6 +2,8 @@ import os
 import json
 import requests
 from pathlib import Path
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # --------------------------------------------------
 # ENV CONFIG (GHA or local)
@@ -24,6 +26,24 @@ HEADERS = {
     "Authorization": f"Bearer {API_TOKEN}",
     "Content-Type": "application/json",
 }
+
+# Timeout in seconds for each Cloudsmith API request.
+REQUEST_TIMEOUT = 30
+
+# Retry up to 3 times on transient errors, with exponential backoff.
+_RETRY = Retry(
+    total=3,
+    backoff_factor=1,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["GET", "PUT"],
+    raise_on_status=False,
+)
+
+# Single reusable session with retry adapter and shared headers.
+_SESSION = requests.Session()
+_SESSION.headers.update(HEADERS)
+_SESSION.mount("https://", HTTPAdapter(max_retries=_RETRY))
+_SESSION.mount("http://", HTTPAdapter(max_retries=_RETRY))
 
 
 # --------------------------------------------------
@@ -77,7 +97,7 @@ def render_rego(entries):
 # --------------------------------------------------
 
 def fetch_policy():
-    r = requests.get(POLICY_URL, headers=HEADERS)
+    r = _SESSION.get(POLICY_URL, timeout=REQUEST_TIMEOUT)
     r.raise_for_status()
     return r.json()
 
@@ -93,7 +113,7 @@ def update_policy(policy, rego):
         "is_terminal": policy["is_terminal"],
     }
 
-    r = requests.put(POLICY_URL, headers=HEADERS, json=payload)
+    r = _SESSION.put(POLICY_URL, json=payload, timeout=REQUEST_TIMEOUT)
     r.raise_for_status()
 
 
