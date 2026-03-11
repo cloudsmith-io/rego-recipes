@@ -82,6 +82,16 @@ They are preserved for documentation history and migration reference.
 
 ---
 
+### exemptions/
+
+A GitOps workflow for managing policy exemptions.
+
+Rather than editing policies manually, exemptions are stored in `allow.json`, reviewed via Pull Requests, and automatically applied to Cloudsmith on merge via GitHub Actions.
+
+See the [Managing Exemptions](#managing-exemptions-gitops-workflow) section for details.
+
+---
+
 ## Policy Ordering & Precedence
 
 Cloudsmith EPM evaluates policies in precedence order (lowest precedence runs first).
