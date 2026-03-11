@@ -2,6 +2,8 @@ import os
 import json
 import requests
 from pathlib import Path
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # --------------------------------------------------
 # ENV CONFIG (GHA or local)
@@ -24,6 +26,23 @@ HEADERS = {
     "Authorization": f"Bearer {API_TOKEN}",
     "Content-Type": "application/json",
 }
+
+# Timeout in seconds for all API requests (connect, read).
+REQUEST_TIMEOUT = 30
+
+# Retry up to 3 times on transient errors (5xx, 429), with exponential backoff.
+_retry = Retry(
+    total=3,
+    backoff_factor=2,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["GET", "PUT"],
+    raise_on_status=False,
+)
+_adapter = HTTPAdapter(max_retries=_retry)
+
+_session = requests.Session()
+_session.headers.update(HEADERS)
+_session.mount("https://", _adapter)
 
 
 # --------------------------------------------------
@@ -60,7 +79,7 @@ def render_rego(entries):
 # --------------------------------------------------
 
 def fetch_policy():
-    r = requests.get(POLICY_URL, headers=HEADERS)
+    r = _session.get(POLICY_URL, timeout=REQUEST_TIMEOUT)
     r.raise_for_status()
     return r.json()
 
@@ -76,7 +95,7 @@ def update_policy(policy, rego):
         "is_terminal": policy["is_terminal"],
     }
 
-    r = requests.put(POLICY_URL, headers=HEADERS, json=payload)
+    r = _session.put(POLICY_URL, json=payload, timeout=REQUEST_TIMEOUT)
     r.raise_for_status()
 
 
