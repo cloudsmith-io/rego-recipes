@@ -50,3 +50,13 @@ jobs:
             echo "Checking $file"
             opa check "$file"
           done
+
+      - name: Unit Test Policies
+        run: |
+          find baseline advanced -name "*_test.rego" -print0 | \
+          while IFS= read -r -d '' test_file; do
+            policy="${test_file/_test/}"
+            echo "Testing $test_file"
+            opa test "$policy" "$test_file"
+          done
+
