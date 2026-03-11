@@ -8,7 +8,7 @@ The goal of this repository is to define a clear, recommended secure baseline fo
 
 ## Design Principles
 
-All policies in this repository:
+All policies in `baseline/` and `advanced/`:
 
 - Are WASM-compatible  
 - Use only supported Cloudsmith EPM builtins  
@@ -74,7 +74,7 @@ Historical recipes and experimental policies retained for reference.
 
 Policies in this directory:
 
-- May use older patterns  
+- May use older patterns, including deprecated syntax such as `import rego.v1`  
 - May not reflect current schema or best practices  
 - Are not recommended for new deployments  
 
