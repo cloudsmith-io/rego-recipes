@@ -46,12 +46,29 @@ def load_allowlist():
 # TEMPLATE RENDER
 # --------------------------------------------------
 
+def _validate_allowlist_entry(entry):
+    """
+    Validate that an allowlist entry is a string in 'format:name:version' form.
+    """
+    if not isinstance(entry, str):
+        raise ValueError("Allowlist entries must be strings in 'format:name:version' form")
+
+    # Require exactly two ':' separators to roughly enforce 'format:name:version'.
+    if entry.count(":") != 2:
+        raise ValueError(f"Invalid allowlist entry '{entry}'; expected 'format:name:version'")
+
+    return entry
+
+
 def render_rego(entries):
 
     template = TEMPLATE_FILE.read_text()
 
-    formatted = ",\n    ".join(f'"{e}"' for e in entries)
+    # Validate entries and ensure they are in the expected shape.
+    validated_entries = [_validate_allowlist_entry(e) for e in entries]
 
+    # Use JSON encoding to safely escape values for inclusion in Rego.
+    formatted = ",\n    ".join(json.dumps(e) for e in validated_entries)
     return template.replace("{{ENTRIES}}", formatted)
 
 
