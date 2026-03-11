@@ -118,13 +118,13 @@ https://docs.cloudsmith.com/supply-chain-security/epm
 
 ## Managing Exemptions (GitOps Workflow)
 
-The allowlist policy in `baseline/` supports a GitOps-based exemption workflow.
+The `exemptions/` directory supports a GitOps-based exemption workflow.
 Rather than editing policies manually, exemptions are stored in Git, reviewed via
 Pull Requests, and automatically applied to Cloudsmith on merge.
 
 ### How it works
 
-1. Maintain an exemption list in the format `format:name:version`:
+1. Maintain an exemption list in `exemptions/allow.json` using the format `format:name:version`:
 
 ```json
 [
@@ -134,7 +134,8 @@ Pull Requests, and automatically applied to Cloudsmith on merge.
 ```
 
 2. Open a Pull Request for security/DevOps review.
-3. On merge, a CI step regenerates the allowlist Rego policy from the exemption list and uploads it to Cloudsmith via the API.
+3. On merge, a CI step renders the allowlist Rego policy from `exemptions/templates/allowlist.rego.tpl`
+   and uploads it directly to Cloudsmith via the API.
 
 ### Why this approach
 
