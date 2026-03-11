@@ -3,8 +3,8 @@ package cloudsmith
 default match := false
 
 ############################################################
-# GENERATED FILE — DO NOT EDIT MANUALLY
-# Managed by exemption workflow
+# TEMPLATE FILE — EDIT THIS TEMPLATE; GENERATED REGO IS PRODUCED FROM IT
+# Managed by exemption workflow; generated Rego output may be marked as DO NOT EDIT
 ############################################################
 
 allowlist := {
