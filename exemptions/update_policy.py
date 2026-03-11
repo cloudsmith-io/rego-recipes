@@ -25,6 +25,9 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
+# Timeout (seconds) for all Cloudsmith API requests.
+REQUEST_TIMEOUT = 30
+
 
 # --------------------------------------------------
 # LOAD DATA
@@ -77,7 +80,7 @@ def render_rego(entries):
 # --------------------------------------------------
 
 def fetch_policy():
-    r = requests.get(POLICY_URL, headers=HEADERS)
+    r = requests.get(POLICY_URL, headers=HEADERS, timeout=REQUEST_TIMEOUT)
     r.raise_for_status()
     return r.json()
 
@@ -93,7 +96,7 @@ def update_policy(policy, rego):
         "is_terminal": policy["is_terminal"],
     }
 
-    r = requests.put(POLICY_URL, headers=HEADERS, json=payload)
+    r = requests.put(POLICY_URL, headers=HEADERS, json=payload, timeout=REQUEST_TIMEOUT)
     r.raise_for_status()
 
 
