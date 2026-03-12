@@ -8,7 +8,7 @@ The goal of this repository is to define a clear, recommended secure baseline fo
 
 ## Design Principles
 
-All policies in this repository:
+Policies in `baseline/` and `advanced/`:
 
 - Are WASM-compatible  
 - Use only supported Cloudsmith EPM builtins  
@@ -18,6 +18,8 @@ All policies in this repository:
 - Are safe for production use  
 
 These policies are intended to be readable, predictable, and suitable for enterprise environments.
+
+> **Note:** Policies in `legacy/` are preserved for reference only and are not recommended for new deployments. The production-ready guarantees above apply to `baseline/` and `advanced/` exclusively.
 
 ---
 
