@@ -20,7 +20,14 @@ jobs:
 
       - name: Show OPA Version
         run: opa version
+      - name: Install Regal
+        run: |
+          curl -L -o regal https://github.com/StyraInc/regal/releases/latest/download/regal_Linux_x86_64
+          chmod +x regal
+          sudo mv regal /usr/local/bin/regal
 
+      - name: Lint with Regal
+        run: regal lint baseline advanced
       - name: Format Check
         run: |
           if [ -d baseline ]; then
@@ -33,15 +40,6 @@ jobs:
           else
             echo "No advanced folder"
           fi
-
-      - name: Install Regal
-        run: |
-          curl -L -o regal https://github.com/StyraInc/regal/releases/latest/download/regal_Linux_x86_64
-          chmod +x regal
-          sudo mv regal /usr/local/bin/regal
-
-      - name: Lint with Regal
-        run: regal lint baseline advanced
 
       - name: Validate Policies
         run: |
