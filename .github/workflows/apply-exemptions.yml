@@ -1,0 +1,39 @@
+name: Apply EPM Exemptions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "exemptions/allow.json"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cloudsmith OIDC login
+        uses: cloudsmith-io/cloudsmith-cli-action@v1.0.2
+        with:
+          oidc-namespace: ${{ vars.CLOUDSMITH_WORKSPACE }}
+          oidc-service-slug: ${{ vars.CLOUDSMITH_SERVICE }}
+          oidc-auth-only: "true"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Apply exemptions
+        env:
+          CLOUDSMITH_WORKSPACE: ${{ vars.CLOUDSMITH_WORKSPACE }}
+          ALLOW_POLICY_SLUG: ${{ secrets.ALLOW_POLICY_SLUG }}
+          CLOUDSMITH_TOKEN: ${{ env.CLOUDSMITH_API_KEY }}
+        run: python exemptions/update_policy.py
