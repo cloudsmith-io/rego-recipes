@@ -3,7 +3,7 @@ name: OPA Lint & Validate
 on:
   pull_request:
   push:
-    branches: [main, epm-baseline-refactor]
+    branches: [main]
 
 jobs:
   opa:

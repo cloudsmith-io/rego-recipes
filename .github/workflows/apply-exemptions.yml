@@ -2,7 +2,7 @@ name: Apply EPM Exemptions
 
 on:
   push:
-    branches: [epm-baseline-refactor, main]
+    branches: [main]
     paths:
       - "exemptions/allow.json"
 
