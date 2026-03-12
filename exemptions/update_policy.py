@@ -2,6 +2,8 @@ import os
 import json
 import requests
 from pathlib import Path
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # --------------------------------------------------
 # ENV CONFIG (GHA or local)
@@ -24,6 +26,32 @@ HEADERS = {
     "Authorization": f"Bearer {API_TOKEN}",
     "Content-Type": "application/json",
 }
+
+# Timeout in seconds for each API request.
+REQUEST_TIMEOUT = 30
+
+# Retry up to 3 times on transient server errors, with exponential backoff
+# (1 s, 2 s, 4 s). 4xx client errors are not retried.
+_RETRY = Retry(
+    total=3,
+    backoff_factor=1,
+    status_forcelist=[500, 502, 503, 504],
+    allowed_methods=["GET", "PUT"],
+    # Keep raise_on_status=False so that after retries are exhausted the
+    # response object is returned; raise_for_status() in each call site then
+    # raises the more informative requests.HTTPError rather than a urllib3
+    # MaxRetryError.
+    raise_on_status=False,
+)
+
+
+def _make_session():
+    """Return a requests Session with retry/backoff pre-configured."""
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    adapter = HTTPAdapter(max_retries=_RETRY)
+    session.mount("https://", adapter)
+    return session
 
 
 # --------------------------------------------------
@@ -77,9 +105,10 @@ def render_rego(entries):
 # --------------------------------------------------
 
 def fetch_policy():
-    r = requests.get(POLICY_URL, headers=HEADERS)
-    r.raise_for_status()
-    return r.json()
+    with _make_session() as session:
+        r = session.get(POLICY_URL, timeout=REQUEST_TIMEOUT)
+        r.raise_for_status()
+        return r.json()
 
 
 def update_policy(policy, rego):
@@ -93,8 +122,9 @@ def update_policy(policy, rego):
         "is_terminal": policy["is_terminal"],
     }
 
-    r = requests.put(POLICY_URL, headers=HEADERS, json=payload)
-    r.raise_for_status()
+    with _make_session() as session:
+        r = session.put(POLICY_URL, json=payload, timeout=REQUEST_TIMEOUT)
+        r.raise_for_status()
 
 
 # --------------------------------------------------
