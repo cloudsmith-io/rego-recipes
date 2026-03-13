@@ -10,12 +10,12 @@ The goal of this repository is to define a clear, recommended secure baseline fo
 
 All policies in this repository:
 
-- Are WASM-compatible  
-- Use only supported Cloudsmith EPM builtins  
-- Avoid deprecated syntax (e.g. `import rego.v1`)  
-- Follow OPA style guidelines  
-- Are structured for composability using precedence  
-- Are safe for production use  
+- Are WASM-compatible
+- Use only supported Cloudsmith EPM builtins
+- Avoid deprecated syntax (e.g. `import rego.v1`)
+- Follow OPA style guidelines
+- Are structured for composability using precedence
+- Are safe for production use
 
 These policies are intended to be readable, predictable, and suitable for enterprise environments.
 
@@ -43,11 +43,11 @@ Recommended secure defaults for production environments.
 
 These policies address common supply chain security requirements such as:
 
-- Malware blocking  
-- High-risk vulnerability control (CVSS / EPSS)  
-- License compliance  
-- Workflows using package age  
-- Explicit allowlist and blocklist handling  
+- Malware blocking
+- High-risk vulnerability control (CVSS / EPSS)
+- License compliance
+- Workflows using package age
+- Explicit allowlist and blocklist handling
 
 If you are deploying EPM in a new workspace, start here.
 
@@ -59,10 +59,10 @@ Optional or format-specific policies that provide deeper governance controls.
 
 These may include:
 
-- Base image origin enforcement  
-- SBOM-based controls  
-- Model governance policies  
-- Specialized workflow patterns  
+- Base image origin enforcement
+- SBOM-based controls
+- Model governance policies
+- Specialized workflow patterns
 
 Advanced policies are production-ready but not universally required.
 
@@ -74,9 +74,9 @@ Historical recipes and experimental policies retained for reference.
 
 Policies in this directory:
 
-- May use older patterns  
-- May not reflect current schema or best practices  
-- Are not recommended for new deployments  
+- May use older patterns
+- May not reflect current schema or best practices
+- Are not recommended for new deployments
 
 They are preserved for documentation history and migration reference.
 
@@ -108,10 +108,10 @@ A recommended precedence pattern for baseline deployments is:
 6. Exact blocklist (explicit deny)
 7. Malware block (final quarantine safeguard)
 
-All matched policy actions are applied within a single transaction.  
+All matched policy actions are applied within a single transaction.
 The package state visible to users reflects the final committed result.
 
-For full EPM documentation, see:  
+For full EPM documentation, see:
 https://docs.cloudsmith.com/supply-chain-security/epm
 
 ---
@@ -127,10 +127,7 @@ Pull Requests, and automatically applied to Cloudsmith on merge.
 1. Maintain an exemption list in the format `format:name:version`:
 
 ```json
-[
-  "python:requests:2.6.4",
-  "npm:left-pad:1.3.0"
-]
+["python:requests:2.6.4", "npm:left-pad:1.3.0"]
 ```
 
 2. Open a Pull Request for security/DevOps review.
@@ -161,3 +158,10 @@ This repository is the single source of truth for:
 - Secure baseline recommendations
 - Enterprise EPM enablement guidance
 
+---
+
+## Using as npm Package
+
+For JavaScript/TypeScript integration (e.g., policy management UIs), this repository can be installed as an npm package directly from GitHub.
+
+See [NPM.md](NPM.md) for installation instructions and usage examples.
