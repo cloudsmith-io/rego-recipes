@@ -1,0 +1,48 @@
+{
+  "name": "@cloudsmith/rego-recipes",
+  "version": "1.0.0",
+  "description": "Curated, production-ready Open Policy Agent (OPA) policies for Cloudsmith Enterprise Policy Management (EPM)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "baseline/",
+    "advanced/",
+    "legacy/",
+    "NPM.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "opa",
+    "open-policy-agent",
+    "rego",
+    "cloudsmith",
+    "policy",
+    "security",
+    "supply-chain",
+    "epm",
+    "enterprise-policy-management"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloudsmith-io/rego-recipes.git"
+  },
+  "author": "Cloudsmith",
+  "bugs": {
+    "url": "https://github.com/cloudsmith-io/rego-recipes/issues"
+  },
+  "homepage": "https://github.com/cloudsmith-io/rego-recipes#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
