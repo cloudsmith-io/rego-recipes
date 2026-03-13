@@ -1,6 +1,6 @@
 # Cloudsmith EPM Recipes
 
-This repository contains curated, production-ready Open Policy Agent (OPA) policies for use with Cloudsmith Enterprise Policy Management (EPM).
+This repository contains curated, production-ready Open Policy Agent (OPA) policies for use with Cloudsmith Enterprise Policy Manager (EPM).
 
 The goal of this repository is to define a clear, recommended secure baseline for Cloudsmith workspaces, along with a smaller set of advanced governance patterns.
 
