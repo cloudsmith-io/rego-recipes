@@ -1,3 +1,6 @@
+# METADATA
+# title: Package age restore
+# description: Restore packages that are older than N days
 package cloudsmith
 
 default match := false
