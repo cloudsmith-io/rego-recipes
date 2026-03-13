@@ -5,7 +5,7 @@
 
 # Policy METADATA
 
-- All policies should include METADATA comments at the top of the file
+- All new policies (and any existing policies you modify) should include METADATA comments at the top of the file
 - Place METADATA before the `package` declaration
 
 ## Format
