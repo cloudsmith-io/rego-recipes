@@ -5,7 +5,7 @@
 
 # Policy METADATA
 
-- All policies should include METADATA comments at the top of the file
+- All new policies (and any existing policies you modify) should include METADATA comments at the top of the file
 - METADATA is extracted during build to generate policy metadata (title, description)
 - Place METADATA before the `package` declaration
 
@@ -24,4 +24,4 @@ package cloudsmith
 - `description`: One-line summary of policy behavior (e.g., "Block packages with detected malware vulnerabilities (MAL- prefix)")
 - Keep descriptions concise and action-oriented
 - If METADATA is missing, build will auto-generate sentence case title from filename
-- Follow OPA METADATA annotations format: https://www.openpolicyagent.org/docs/latest/annotations/
+- Follow OPA METADATA annotations format: https://www.openpolicyagent.org/docs/policy-language#metadata
