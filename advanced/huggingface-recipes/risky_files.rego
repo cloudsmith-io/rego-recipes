@@ -4,7 +4,7 @@ default match := false
 
 pkg := input.v0.package
 
-hf_pkg if "huggingface" == pkg.format
+hf_pkg if pkg.format == "huggingface"
 
 # Upstream packages are fetched by a system user
 is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-o6v"
@@ -20,7 +20,12 @@ is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-o6v"
 # SavedModel (.pb)
 # GGUF (.gguf)
 
-risky_file_extensions := {".h5", ".hdf5", ".pdparams", ".keras", ".bin", ".pkl", ".dat", ".pt", ".pth", ".ckpt", ".npy", ".joblib", ".dill", ".pb", ".gguf", ".zip"}
+risky_file_extensions := {
+	".bin", ".ckpt", ".dat", ".dill",
+	".gguf", ".h5", ".hdf5", ".joblib",
+	".keras", ".npy", ".pb", ".pdparams",
+	".pkl", ".pt", ".pth", ".zip",
+}
 
 match if {
 	hf_pkg

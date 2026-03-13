@@ -3,7 +3,7 @@ name: OPA Lint & Validate
 on:
   pull_request:
   push:
-    branches: [main, epm-baseline-refactor]
+    branches: [main]
 
 jobs:
   opa:
@@ -20,7 +20,14 @@ jobs:
 
       - name: Show OPA Version
         run: opa version
+      - name: Install Regal
+        run: |
+          curl -L -o regal https://github.com/StyraInc/regal/releases/latest/download/regal_Linux_x86_64
+          chmod +x regal
+          sudo mv regal /usr/local/bin/regal
 
+      - name: Lint with Regal
+        run: regal lint baseline advanced tests
       - name: Format Check
         run: |
           if [ -d baseline ]; then
@@ -33,11 +40,26 @@ jobs:
           else
             echo "No advanced folder"
           fi
+          if [ -d tests ]; then
+            opa fmt --fail tests
+          else
+            echo "No tests folder"
+          fi
 
       - name: Validate Policies
         run: |
-          find baseline advanced -name "*.rego" -print0 | \
+          find baseline advanced tests -name "*.rego" -print0 | \
           while IFS= read -r -d '' file; do
             echo "Checking $file"
             opa check "$file"
+          done
+
+      - name: Unit Test Policies
+        run: |
+          find tests -name "*_test.rego" -print0 | \
+          while IFS= read -r -d '' test_file; do
+            policy="${test_file/tests\//}"
+            policy="${policy/_test/}"
+            echo "Testing $policy with $test_file"
+            opa test "$policy" "$test_file"
           done

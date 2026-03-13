@@ -4,7 +4,7 @@ default match := false
 
 pkg := input.v0.package
 
-hf_pkg if "huggingface" == pkg.format
+hf_pkg if pkg.format == "huggingface"
 
 match if {
 	hf_pkg

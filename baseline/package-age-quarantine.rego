@@ -1,6 +1,3 @@
-# METADATA
-# title: Package age quarantine
-# description: Quarantine packages published within the last N days (default: 3 days)
 package cloudsmith
 
 default match := false
