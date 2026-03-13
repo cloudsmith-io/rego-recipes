@@ -27,7 +27,7 @@ jobs:
           sudo mv regal /usr/local/bin/regal
 
       - name: Lint with Regal
-        run: regal lint baseline advanced
+        run: regal lint baseline advanced tests
       - name: Format Check
         run: |
           if [ -d baseline ]; then
@@ -40,10 +40,15 @@ jobs:
           else
             echo "No advanced folder"
           fi
+          if [ -d tests ]; then
+            opa fmt --fail tests
+          else
+            echo "No tests folder"
+          fi
 
       - name: Validate Policies
         run: |
-          find baseline advanced -name "*.rego" -print0 | \
+          find baseline advanced tests -name "*.rego" -print0 | \
           while IFS= read -r -d '' file; do
             echo "Checking $file"
             opa check "$file"
@@ -51,10 +56,10 @@ jobs:
 
       - name: Unit Test Policies
         run: |
-          find baseline advanced -name "*_test.rego" -print0 | \
+          find tests -name "*_test.rego" -print0 | \
           while IFS= read -r -d '' test_file; do
-            policy="${test_file/_test/}"
-            echo "Testing $test_file"
+            policy="${test_file/tests\//}"
+            policy="${policy/_test/}"
+            echo "Testing $policy with $test_file"
             opa test "$policy" "$test_file"
           done
-
