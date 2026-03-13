@@ -1,3 +1,6 @@
+# METADATA
+# title: License compliance
+# description: Flag packages with copyleft licenses (GPL, LGPL, AGPL, MPL, etc.)
 package cloudsmith
 
 default match := false
