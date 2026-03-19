@@ -1,4 +1,4 @@
-// Auto-generated bundle script — reads all .rego policy files and emits dist/index.mjs
+// Bundle script — reads all .rego policy files and emits dist/index.mjs
 import {
   readFileSync,
   readdirSync,
@@ -49,10 +49,12 @@ function findRegoFiles(dir) {
 // Auto-discover top-level directories that contain at least one non-test .rego file
 function discoverCategories(root) {
   return readdirSync(root)
-    .filter(entry => {
+    .filter((entry) => {
       if (entry.startsWith('.')) return false;
       const fullPath = join(root, entry);
-      return statSync(fullPath).isDirectory() && findRegoFiles(fullPath).length > 0;
+      return (
+        statSync(fullPath).isDirectory() && findRegoFiles(fullPath).length > 0
+      );
     })
     .sort();
 }
@@ -74,7 +76,11 @@ for (const category of discoveredCategories) {
     const source = readFileSync(filePath, 'utf8');
     const { title, description } = parseMetadata(source);
     const baseKey = deriveKey(filePath, categoryDir);
-    rawEntries.push({ category, baseKey, policy: { title, description, source } });
+    rawEntries.push({
+      category,
+      baseKey,
+      policy: { title, description, source },
+    });
   }
 }
 
@@ -131,5 +137,5 @@ lines.push('export default all;', '');
 mkdirSync(dirname(OUTPUT), { recursive: true });
 writeFileSync(OUTPUT, lines.join('\n'), 'utf8');
 console.log(
-  `Built ${OUTPUT} (${Object.keys(allPolicies).length} policies across ${discoveredCategories.length} categories: ${discoveredCategories.join(', ')})`
+  `Built ${OUTPUT} (${Object.keys(allPolicies).length} policies across ${discoveredCategories.length} categories: ${discoveredCategories.join(', ')})`,
 );
