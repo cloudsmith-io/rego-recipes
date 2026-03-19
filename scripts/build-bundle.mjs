@@ -91,7 +91,7 @@ const finalEntries = rawEntries.map(({ category, baseKey, policy }) => {
     keyCounts[baseKey] > 1
       ? toCamelCase(category) + capitalize(baseKey)
       : baseKey;
-  return { category, exportKey, policy };
+  return { category, exportKey, policy: { id: exportKey, ...policy } };
 });
 
 // Build category groups and flat map
