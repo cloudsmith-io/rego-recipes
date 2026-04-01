@@ -1,0 +1,282 @@
+#!/usr/bin/env node
+// Copyright 2026 Cloudsmith Ltd
+
+import { readdir, readFile, writeFile, mkdir } from 'fs/promises';
+import { join, relative, basename } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const rootDir = join(__dirname, '..');
+const distDir = join(rootDir, 'dist');
+
+/**
+ * Recursively find all .rego files in a directory
+ * @param {string} dir - Directory to search
+ * @param {string} baseDir - Base directory for relative paths
+ * @returns {Promise<Array<{absolutePath: string, relativePath: string, name: string}>>}
+ */
+async function findRegoFiles(dir, baseDir = dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files = [];
+
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      const subFiles = await findRegoFiles(fullPath, baseDir);
+      files.push(...subFiles);
+    } else if (entry.isFile() && entry.name.endsWith('.rego')) {
+      const relativePath = relative(baseDir, fullPath);
+      files.push({
+        absolutePath: fullPath,
+        relativePath,
+        name: basename(entry.name, '.rego'),
+      });
+    }
+  }
+
+  return files;
+}
+
+/**
+ * Convert a file path to a safe JavaScript identifier
+ * Uses the full path to ensure uniqueness (e.g., legacy/recipe-1/policy.rego -> legacyRecipe1Policy)
+ * @param {string} path - File path to convert (e.g., "baseline/cooldown.rego")
+ * @returns {string}
+ */
+function toSafeIdentifier(path) {
+  // Remove .rego extension and convert path separators, hyphens, underscores to camelCase
+  return path
+    .replace(/\.rego$/, '') // Remove .rego extension
+    .replace(/[\/\-_]([a-z])/g, (_, char) => char.toUpperCase()) // Convert separators to camelCase
+    .replace(/^([a-z])/, (_, char) => char.toLowerCase()) // Ensure first char is lowercase
+    .replace(/[^a-zA-Z0-9]/g, ''); // Remove any remaining special chars
+}
+
+/**
+ * Format a filename to sentence case
+ * @param {string} filename - Filename without extension (e.g., "malware-block")
+ * @returns {string} - Sentence case version (e.g., "Malware block")
+ */
+function formatFilenameToTitle(filename) {
+  const words = filename.split(/[-_]/).join(' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/**
+ * Escape string content for use in JavaScript template literals
+ * @param {string} content - Content to escape
+ * @returns {string}
+ */
+function escapeTemplateString(content) {
+  return content
+    .replace(/\\/g, '\\\\') // Escape backslashes
+    .replace(/`/g, '\\`') // Escape backticks
+    .replace(/\$/g, '\\$'); // Escape dollar signs
+}
+
+/**
+ * Extract metadata from METADATA comments in .rego file
+ * @param {string} content - The .rego file content
+ * @returns {{title: string, description: string}}
+ */
+function extractMetadata(content) {
+  const metadata = {
+    title: '',
+    description: '',
+  };
+
+  // Look for METADATA block at start of file
+  const metadataRegex = /^#\s*METADATA\s*\n((?:#.*\n)*)/m;
+  const match = content.match(metadataRegex);
+
+  if (!match) {
+    return metadata;
+  }
+
+  const metadataBlock = match[1];
+
+  // Extract title
+  const titleMatch = metadataBlock.match(/^#\s*title:\s*(.+)$/m);
+  if (titleMatch) {
+    metadata.title = titleMatch[1].trim();
+  }
+
+  // Extract description
+  const descMatch = metadataBlock.match(/^#\s*description:\s*(.+)$/m);
+  if (descMatch) {
+    metadata.description = descMatch[1].trim();
+  }
+
+  return metadata;
+}
+
+/**
+ * Generate the main index.js module
+ * @param {Array<{absolutePath: string, relativePath: string, name: string}>} policies
+ * @param {Record<string, Array<{absolutePath: string, relativePath: string, name: string}>>} policiesByDir
+ * @returns {Promise<void>}
+ */
+async function generateIndexJs(policies, policiesByDir) {
+  const contentDeclarations = [];
+  const exports = [];
+
+  for (const policy of policies) {
+    const identifier = toSafeIdentifier(policy.relativePath);
+
+    // Read the .rego file content and inline it
+    const regoContent = await readFile(policy.absolutePath, 'utf-8');
+    const escapedContent = escapeTemplateString(regoContent);
+
+    // Extract metadata
+    const metadata = extractMetadata(regoContent);
+
+    // Use METADATA title or format filename as fallback
+    const title = metadata.title || formatFilenameToTitle(policy.name);
+
+    contentDeclarations.push(
+      `const ${identifier}Content = \`${escapedContent}\`;`,
+    );
+
+    exports.push(
+      `export const ${identifier} = {
+  id: '${identifier}',
+  title: '${escapeTemplateString(title)}',
+  description: '${escapeTemplateString(metadata.description)}',
+  path: '${policy.relativePath}',
+  content: ${identifier}Content,
+};`,
+    );
+  }
+
+  const content = `// Copyright 2026 Cloudsmith Ltd
+// Auto-generated by scripts/build.js - DO NOT EDIT
+
+${contentDeclarations.join('\n\n')}
+
+${exports.join('\n\n')}
+
+// Export policies by category
+export const baselinePolicies = [
+  ${policiesByDir.baseline?.map((p) => toSafeIdentifier(p.relativePath)).join(',\n  ') || ''},
+];
+
+export const advancedPolicies = [
+  ${policiesByDir.advanced?.map((p) => toSafeIdentifier(p.relativePath)).join(',\n  ') || ''},
+];
+
+export const legacyPolicies = [
+  ${policiesByDir.legacy?.map((p) => toSafeIdentifier(p.relativePath)).join(',\n  ') || ''},
+];
+
+// Export all policies as a collection
+export const allPolicies = [
+  ${policies.map((p) => toSafeIdentifier(p.relativePath)).join(',\n  ')},
+];
+`;
+
+  await writeFile(join(distDir, 'index.js'), content, 'utf-8');
+}
+
+/**
+ * Generate the index.d.ts TypeScript definitions
+ * @param {Array<{absolutePath: string, relativePath: string, name: string}>} policies
+ * @param {Record<string, Array<{absolutePath: string, relativePath: string, name: string}>>} policiesByDir
+ * @returns {Promise<void>}
+ */
+async function generateIndexDts(policies, policiesByDir) {
+  const interfaces = [];
+  const exports = [];
+
+  const policyInterface = `export interface Policy {
+  /** Unique identifier (camelCase version of path) */
+  id: string;
+  /** Display title (from METADATA or sentence case filename) */
+  title: string;
+  /** Policy description (from METADATA or empty string) */
+  description: string;
+  /** Relative path to the .rego file from package root */
+  path: string;
+  /** The raw .rego file content as a string */
+  content: string;
+}`;
+
+  for (const policy of policies) {
+    const identifier = toSafeIdentifier(policy.relativePath);
+    exports.push(`export const ${identifier}: Policy;`);
+  }
+
+  const content = `// Copyright 2026 Cloudsmith Ltd
+// Auto-generated by scripts/build.js - DO NOT EDIT
+
+${policyInterface}
+
+${exports.join('\n')}
+
+/** Baseline policies collection */
+export const baselinePolicies: Policy[];
+
+/** Advanced policies collection */
+export const advancedPolicies: Policy[];
+
+/** Legacy policies collection (deprecated) */
+export const legacyPolicies: Policy[];
+
+/** All policies as a collection */
+export const allPolicies: Policy[];
+`;
+
+  await writeFile(join(distDir, 'index.d.ts'), content, 'utf-8');
+}
+
+/**
+ * Main build function
+ */
+async function build() {
+  console.log('Building @cloudsmith/rego-recipes...\n');
+
+  // Ensure dist directory exists
+  await mkdir(distDir, { recursive: true });
+
+  // Directories to scan for .rego files
+  const policyDirs = ['baseline', 'advanced', 'legacy'];
+
+  // Find all .rego files in each directory
+  /** @type {Record<string, Array<{absolutePath: string, relativePath: string, name: string}>>} */
+  const policiesByDir = {};
+  for (const dir of policyDirs) {
+    policiesByDir[dir] = await findRegoFiles(join(rootDir, dir), rootDir);
+  }
+
+  const allPolicies = Object.values(policiesByDir).flat();
+
+  console.log(`Found ${allPolicies.length} policy files:`);
+  for (const dir of policyDirs) {
+    console.log(`  - ${policiesByDir[dir].length} from ${dir}/`);
+  }
+  console.log('');
+
+  // Generate output files
+  console.log('Generating dist/index.js...');
+  await generateIndexJs(allPolicies, policiesByDir);
+
+  console.log('Generating dist/index.d.ts...');
+  await generateIndexDts(allPolicies, policiesByDir);
+
+  console.log('\n✓ Build complete!\n');
+
+  // List exported policy names
+  console.log('Exported policies:');
+  for (const policy of allPolicies) {
+    const identifier = toSafeIdentifier(policy.relativePath);
+    console.log(`  - ${identifier} (${policy.relativePath})`);
+  }
+}
+
+// Run build
+build().catch((error) => {
+  console.error('Build failed:', error);
+  process.exit(1);
+});

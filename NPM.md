@@ -1,0 +1,103 @@
+# Using Rego Recipes as an npm Package
+
+This repository can be consumed as an npm package in JavaScript/TypeScript applications to power policy management UIs.
+
+---
+
+## Installation
+
+```bash
+npm install github:cloudsmith-io/rego-recipes
+```
+
+Specify a branch/tag/commit:
+
+```bash
+npm install github:cloudsmith-io/rego-recipes#main
+npm install github:cloudsmith-io/rego-recipes#v1.0.0
+```
+
+---
+
+## Usage
+
+```typescript
+import {
+  baselineMalwareBlock,
+  baselinePolicies,
+  allPolicies,
+  type Policy,
+} from '@cloudsmith/rego-recipes';
+
+// Access individual policy
+console.log(baselineMalwareBlock.content); // The raw .rego file content
+
+// Use collections
+baselinePolicies.forEach((policy) => {
+  console.log(policy.title, policy.path, policy.content);
+});
+
+// Use the Policy type
+function displayPolicy(policy: Policy) {
+  return `${policy.title}: ${policy.description}`;
+}
+```
+
+---
+
+## Available Exports
+
+### Individual Policies
+
+**Baseline:**
+
+- `baselineExactAllowlistExemption`
+- `baselineExactBlocklist`
+- `baselineHighRiskVulnerability`
+- `baselineLicenseCompliance`
+- `baselineMalwareBlock`
+- `baselinePackageAgeQuarantine`
+- `baselinePackageAgeRestore`
+
+**Advanced:**
+
+- `advancedHuggingfaceRecipesModelCard`
+- `advancedHuggingfaceRecipesRiskyFiles`
+- `advancedHuggingfaceRecipesSecurityScan`
+- `advancedHuggingfaceRecipesTrustedPublishers`
+
+**Legacy:**
+
+- `legacyRecipe1Policy` through `legacyRecipe21Policy` (deprecated)
+
+### Collections
+
+- `baselinePolicies` - All baseline policies
+- `advancedPolicies` - All advanced policies
+- `legacyPolicies` - All legacy policies (deprecated)
+- `allPolicies` - All policies
+
+### TypeScript Types
+
+**`Policy`** - Interface for policy objects:
+
+```typescript
+import { type Policy } from '@cloudsmith/rego-recipes';
+
+// Policy structure:
+interface Policy {
+  id: string; // unique identifier (camelCase)
+  title: string; // display title (from METADATA or sentence case filename)
+  description: string; // policy description (from METADATA or empty)
+  path: string; // relative path from package root
+  content: string; // raw .rego file content
+}
+```
+
+---
+
+## Development
+
+```bash
+npm run build  # Generate dist/index.js and dist/index.d.ts
+```
