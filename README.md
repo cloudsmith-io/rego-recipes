@@ -1,6 +1,6 @@
-# Cloudsmith EPM Recipes
+# Cloudsmith Policy Management Recipes
 
-This repository contains curated, production-ready Open Policy Agent (OPA) policies for use with Cloudsmith Enterprise Policy Management (EPM).
+This repository contains curated, production-ready Open Policy Agent (OPA) policies for use with Cloudsmith's policy management features.
 
 The goal of this repository is to define a clear, recommended secure baseline for Cloudsmith workspaces, along with a smaller set of advanced governance patterns.
 
@@ -11,7 +11,7 @@ The goal of this repository is to define a clear, recommended secure baseline fo
 All policies in this repository:
 
 - Are WASM-compatible  
-- Use only supported Cloudsmith EPM builtins  
+- Use only supported Cloudsmith policy manager builtins  
 - Avoid deprecated syntax (e.g. `import rego.v1`)  
 - Follow OPA style guidelines  
 - Are structured for composability using precedence  
@@ -94,7 +94,7 @@ See the [Managing Exemptions](#managing-exemptions-gitops-workflow) section for 
 
 ## Policy Ordering & Precedence
 
-Cloudsmith EPM evaluates policies in precedence order (lowest precedence runs first).
+Cloudsmith evaluates policies in precedence order (lowest precedence runs first).
 
 All policies in this repository are designed to be non-terminal and composable.
 
@@ -111,7 +111,7 @@ A recommended precedence pattern for baseline deployments is:
 All matched policy actions are applied within a single transaction.  
 The package state visible to users reflects the final committed result.
 
-For full EPM documentation, see:  
+For full policy-related documentation, see:  
 https://docs.cloudsmith.com/supply-chain-security/epm
 
 ---
@@ -148,7 +148,7 @@ The allowlist exemption policy should be placed at a higher precedence than the 
 
 Policies can be deployed using the Cloudsmith API or CLI.
 
-Refer to the official documentation for EPM policy management and simulation:
+Refer to the official documentation for policy management and simulation:
 
 https://docs.cloudsmith.com/supply-chain-security/epm
 
@@ -159,5 +159,5 @@ This repository is the single source of truth for:
 - Policy templates
 - Documentation examples
 - Secure baseline recommendations
-- Enterprise EPM enablement guidance
+- Enterprise policy enablement guidance
 
