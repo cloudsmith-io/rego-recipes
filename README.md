@@ -1,4 +1,4 @@
-# Cloudsmith Policy as Code Recipes
+# Cloudsmith policy as code recipes
 
 This repository contains curated, production-ready Open Policy Agent (OPA) policies for use with Cloudsmith policy as code.
 
@@ -92,7 +92,7 @@ See the [Managing Exemptions](#managing-exemptions-gitops-workflow) section for 
 
 ---
 
-## Policy Ordering & Precedence
+## Policy ordering and precedence
 
 Cloudsmith policy as code evaluates policies in precedence order (lowest precedence runs first).
 
@@ -116,7 +116,7 @@ https://docs.cloudsmith.com/supply-chain-security/epm
 
 ---
 
-## Managing Exemptions (GitOps Workflow)
+## Managing exemptions (GitOps workflow)
 
 The allowlist policy in `baseline/` supports a GitOps-based exemption workflow.
 Rather than editing policies manually, exemptions are stored in Git, reviewed via
@@ -146,9 +146,9 @@ The allowlist exemption policy should be placed at a higher precedence than the 
 
 ## Deployment
 
-Policies can be deployed using the Cloudsmith API or CLI.
+Policies can be deployed using the Cloudsmith webapp, API and the Cloudsmith Terraform Provider. 
 
-Refer to the official documentation for policy as code management and simulation:
+For additional information, visit our user documentation. 
 
 https://docs.cloudsmith.com/supply-chain-security/epm
 
