@@ -86,7 +86,7 @@ They are preserved for documentation history and migration reference.
 
 A GitOps workflow for managing policy exemptions.
 
-Rather than editing policies manually, exemptions are stored in `allow.json`, reviewed via Pull Requests, and automatically applied to Cloudsmith by GitHub Actions when changes are pushed to `main`.
+Rather than editing policies manually, exemptions are stored in `allow.json`, reviewed via pull requests, and automatically applied to Cloudsmith by GitHub Actions when changes are pushed to `main`.
 
 See the [Managing Exemptions](#managing-exemptions-gitops-workflow) section for details.
 
@@ -159,5 +159,5 @@ This repository is the single source of truth for:
 - Policy templates
 - Documentation examples
 - Secure baseline recommendations
-- Enterprise policy as code enablement guidance
+
 
