@@ -1,6 +1,6 @@
-# Cloudsmith EPM Recipes
+# Cloudsmith policy as code recipes
 
-This repository contains curated, production-ready Open Policy Agent (OPA) policies for use with Cloudsmith Enterprise Policy Management (EPM).
+This repository contains curated, production-ready Open Policy Agent (OPA) policies for use with Cloudsmith policy as code.
 
 The goal of this repository is to define a clear, recommended secure baseline for Cloudsmith workspaces, along with a smaller set of advanced governance patterns.
 
@@ -11,7 +11,7 @@ The goal of this repository is to define a clear, recommended secure baseline fo
 All policies in this repository:
 
 - Are WASM-compatible  
-- Use only supported Cloudsmith EPM builtins  
+- Use only supported Cloudsmith policy as code builtins  
 - Avoid deprecated syntax (e.g. `import rego.v1`)  
 - Follow OPA style guidelines  
 - Are structured for composability using precedence  
@@ -49,7 +49,7 @@ These policies address common supply chain security requirements such as:
 - Workflows using package age  
 - Explicit allowlist and blocklist handling  
 
-If you are deploying EPM in a new workspace, start here.
+If you are deploying policy as code in a new workspace, start here.
 
 ---
 
@@ -86,15 +86,15 @@ They are preserved for documentation history and migration reference.
 
 A GitOps workflow for managing policy exemptions.
 
-Rather than editing policies manually, exemptions are stored in `allow.json`, reviewed via Pull Requests, and automatically applied to Cloudsmith by GitHub Actions when changes are pushed to `main`.
+Rather than editing policies manually, exemptions are stored in `allow.json`, reviewed via pull requests, and automatically applied to Cloudsmith by GitHub Actions when changes are pushed to `main`.
 
 See the [Managing Exemptions](#managing-exemptions-gitops-workflow) section for details.
 
 ---
 
-## Policy Ordering & Precedence
+## Policy ordering and precedence
 
-Cloudsmith EPM evaluates policies in precedence order (lowest precedence runs first).
+Cloudsmith policy as code evaluates policies in precedence order (lowest precedence runs first).
 
 All policies in this repository are designed to be non-terminal and composable.
 
@@ -111,12 +111,12 @@ A recommended precedence pattern for baseline deployments is:
 All matched policy actions are applied within a single transaction.  
 The package state visible to users reflects the final committed result.
 
-For full EPM documentation, see:  
+For full policy as code documentation, see:  
 https://docs.cloudsmith.com/supply-chain-security/epm
 
 ---
 
-## Managing Exemptions (GitOps Workflow)
+## Managing exemptions (GitOps workflow)
 
 The allowlist policy in `baseline/` supports a GitOps-based exemption workflow.
 Rather than editing policies manually, exemptions are stored in Git, reviewed via
@@ -138,7 +138,7 @@ Pull Requests, and automatically applied to Cloudsmith on merge.
 
 ### Why this approach
 
-EPM policies embed exemption data directly in Rego. Managing exemptions via Git provides auditability, an approval gate, rollback capability, and a scalable alternative to manual policy edits.
+Policy as code embeds exemption data directly in Rego. Managing exemptions via Git provides auditability, an approval gate, rollback capability, and a scalable alternative to manual policy edits.
 
 The allowlist exemption policy should be placed at a higher precedence than the vulnerability policy (position 5 in the recommended ordering above) so that explicitly approved packages bypass security enforcement.
 
@@ -146,9 +146,9 @@ The allowlist exemption policy should be placed at a higher precedence than the 
 
 ## Deployment
 
-Policies can be deployed using the Cloudsmith API or CLI.
+Policies can be deployed using the Cloudsmith webapp, API and the Cloudsmith Terraform Provider. 
 
-Refer to the official documentation for EPM policy management and simulation:
+For additional information, visit our user documentation. 
 
 https://docs.cloudsmith.com/supply-chain-security/epm
 
@@ -159,5 +159,5 @@ This repository is the single source of truth for:
 - Policy templates
 - Documentation examples
 - Secure baseline recommendations
-- Enterprise EPM enablement guidance
+
 
