@@ -1,5 +1,5 @@
 # METADATA
-# title: License compliance
+# title: Copyleft licenses
 # description: Flag packages with copyleft licenses (GPL, LGPL, AGPL, MPL, etc.)
 package cloudsmith
 

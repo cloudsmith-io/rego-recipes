@@ -1,0 +1,1 @@
+../recipes/license/copyleft_licenses.rego

@@ -1,0 +1,1 @@
+../recipes/vulnerability/cvss_with_fix.rego
