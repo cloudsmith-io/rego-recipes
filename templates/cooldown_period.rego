@@ -1,1 +1,0 @@
-../recipes/publish-date/cooldown_period.rego

@@ -16,10 +16,7 @@ format_name := sprintf("%s:%s", [pkg.format, pkg.name])
 
 minimum_version := minimum_versions[format_name]
 
-below_minimum if {
-	semver.is_valid(pkg.version)
-	semver.compare(pkg.version, minimum_version) < 0
-}
+below_minimum if semver.compare(pkg.version, minimum_version) < 0
 
 unparseable_version if {
 	minimum_version

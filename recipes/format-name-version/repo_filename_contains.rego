@@ -19,4 +19,4 @@ match if {
 	contains(filename, marker)
 }
 
-reason contains sprintf("Debug artifact published to a release repository: %s", [filename]) if match
+reason contains sprintf("Debug artifact published to release repository: %s in %s", [filename, release_repository]) if match
