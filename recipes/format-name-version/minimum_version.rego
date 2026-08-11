@@ -1,6 +1,6 @@
 # METADATA
 # title: Minimum version
-# description: Flag packages older than the minimum permitted version, or whose version cannot be compared.
+# description: Match packages older than the minimum permitted version, or whose version cannot be compared.
 package cloudsmith
 
 default match := false
@@ -26,5 +26,15 @@ unparseable_version if {
 match if below_minimum
 match if unparseable_version
 
-reason contains sprintf("Version %s is older than the minimum permitted %s", [pkg.version, minimum_version]) if below_minimum
-reason contains sprintf("Version %s is not valid SemVer and cannot be checked against the minimum permitted %s", [pkg.version, minimum_version]) if unparseable_version
+reason contains msg if {
+	below_minimum
+	msg := sprintf("Version %s is older than the minimum permitted %s", [pkg.version, minimum_version])
+}
+
+reason contains msg if {
+	unparseable_version
+	msg := sprintf(
+		"Version %s is not valid SemVer and cannot be checked against the minimum permitted %s",
+		[pkg.version, minimum_version],
+	)
+}

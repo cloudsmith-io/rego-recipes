@@ -17,7 +17,6 @@ copyleft := {
 	"GPL-3.0",
 	"GPL-3.0-only",
 	"GPL-3.0-or-later",
-
 	# GNU Lesser General Public License (LGPL)
 	"LGPL-2.0",
 	"LGPL-2.0-only",
@@ -28,7 +27,6 @@ copyleft := {
 	"LGPL-3.0",
 	"LGPL-3.0-only",
 	"LGPL-3.0-or-later",
-
 	# GNU Affero General Public License (AGPL)
 	"AGPL-1.0",
 	"AGPL-1.0-only",
@@ -36,7 +34,6 @@ copyleft := {
 	"AGPL-3.0",
 	"AGPL-3.0-only",
 	"AGPL-3.0-or-later",
-
 	# GNU Free Documentation License (GFDL)
 	"GFDL-1.1-only",
 	"GFDL-1.1-or-later",
@@ -44,32 +41,26 @@ copyleft := {
 	"GFDL-1.2-or-later",
 	"GFDL-1.3-only",
 	"GFDL-1.3-or-later",
-
 	# Mozilla Public License (MPL)
 	"MPL-1.0",
 	"MPL-1.1",
 	"MPL-2.0",
-
 	# Common Development and Distribution License (CDDL)
 	"CDDL-1.0",
 	"CDDL-1.1",
-
 	# Eclipse Public License (EPL)
 	"EPL-1.0",
 	"EPL-2.0",
-
 	# Open Software License (OSL)
 	"OSL-1.0",
 	"OSL-2.0",
 	"OSL-3.0",
-
 	# Creative Commons Share Alike (CC-BY-SA)
 	"CC-BY-SA-1.0",
 	"CC-BY-SA-2.0",
 	"CC-BY-SA-2.5",
 	"CC-BY-SA-3.0",
 	"CC-BY-SA-4.0",
-
 	# Other
 	"QPL-1.0",
 	"Sleepycat",
