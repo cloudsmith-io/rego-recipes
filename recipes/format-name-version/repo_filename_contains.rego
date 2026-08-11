@@ -11,7 +11,9 @@ debug_markers := {"debug", "test", "tmp"}
 
 filename := lower(pkg.filename)
 
-release_repository if endswith(input.v0.repository.name, "-releases")
+repository := input.v0.repository.name
+
+release_repository if endswith(repository, "-releases")
 
 match if {
 	release_repository
@@ -21,5 +23,5 @@ match if {
 
 reason contains msg if {
 	match
-	msg := sprintf("Debug artifact published to release repository: %s in %s", [filename, release_repository])
+	msg := sprintf("Debug artifact published to release repository: %s in %s", [filename, repository])
 }

@@ -16,4 +16,4 @@ format_name_version := sprintf("%s:%s:%s", [pkg.format, pkg.name, pkg.version])
 
 match if format_name_version in allowlist
 
-reason contains sprintf("Mathed by allowlist: %s", [format_name_version]) if match
+reason contains sprintf("Matched by allowlist: %s", [format_name_version]) if match

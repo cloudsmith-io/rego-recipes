@@ -1,23 +1,24 @@
+# METADATA
+# title: Model security scan
+# description: Match upstream Hugging Face models whose security scan is missing, incomplete or unsafe.
 package cloudsmith
 
 default match := false
 
-# Upstream packages are fetched by a system user
-is_upstream_pkg if input.v0.package.uploader.slug == "cloudsmith-o6v"
+pkg := input.v0.package
 
-# Ensure the security scans have been completed and none of the scans
-# find any problematic content.
-# Users an incremental rule to express OR.
-incomplete_or_unsafe if {
-	input.v0.model_security.availability != "COMPLETE"
-}
+# Upstream packages are fetched by a system user.
+is_upstream_pkg if pkg.uploader.slug == "cloudsmith-o6v"
 
-incomplete_or_unsafe if {
-	input.v0.model_security.scan_summary != "SAFE"
+scan_clean if {
+	input.v0.model_security.availability == "COMPLETE"
+	input.v0.model_security.scan_summary == "SAFE"
 }
 
 match if {
-	input.v0.package.format == "huggingface"
+	pkg.format == "huggingface"
 	is_upstream_pkg
-	incomplete_or_unsafe
+	not scan_clean
 }
+
+reason contains "Model security scan is missing, incomplete or unsafe" if match

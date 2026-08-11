@@ -18,9 +18,11 @@ minimum_version := minimum_versions[format_name]
 
 below_minimum if semver.compare(pkg.version, minimum_version) < 0
 
+valid_version if semver.is_valid(pkg.version)
+
 unparseable_version if {
 	minimum_version
-	not semver.is_valid(pkg.version)
+	not valid_version
 }
 
 match if below_minimum
@@ -33,8 +35,5 @@ reason contains msg if {
 
 reason contains msg if {
 	unparseable_version
-	msg := sprintf(
-		"Version %s is not valid SemVer and cannot be checked against the minimum permitted %s",
-		[pkg.version, minimum_version],
-	)
+	msg := sprintf("Version cannot be checked against the minimum permitted %s", [minimum_version])
 }
