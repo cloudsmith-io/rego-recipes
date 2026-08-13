@@ -4,32 +4,32 @@ These build on the [Rego Style Guide](https://www.openpolicyagent.org/docs/style
 Where a guideline comes from there, the section title is noted in brackets.
 
 Every policy evaluates one package against `input.v0` and produces two results: `match`, a boolean
-saying whether the policy fired, and `reason`, a set of messages explaining why.
+saying whether the policy actions fired, and `reason`, a set of messages explaining why.
 
 ## Structure
 
 * Always declare `default match := false`. If `match` ends up undefined, it falls back to false instead of returning nothing.
-* Don't have `match` dependent on `reason`, e.g. avoid `match if count(reason) > 0`. A mistake in a message string then stops the policy matching at all. Work `match` out from the conditions themselves and let `reason` depend on `match`.
-* Write `reason` with `contains`. `reason[msg] if { ... }` looks similar but produces an object keyed by the message rather than a set of messages.
-* Put the value in the rule head: `reason contains sprintf(...) if match`. Only where that pushes the line past 120 characters, assign `msg` in the body instead, which is a departure from the style guide. (Style guide: "Prefer unconditional assignment in rule head over rule body")
+* Don't have `match` dependent on `reason`, e.g. avoid `match if count(reason) > 0`. An undefined message string would stop the policy matching at all. Work `match` out from the conditions themselves and let `reason` depend on `match`.
+* Write `reason` with `contains`. `reason[msg] if { ... }` produces an object keyed by the message rather than a set of messages.
+* Put the value in the rule head: `reason contains sprintf(...) if match`. Only where that pushes the line past 120 characters, assign `msg` in the body instead. (Style guide: "Prefer unconditional assignment in rule head over rule body", "Keep line length `<=` 120 characters")
 * If a policy can fire in more than one way, give each condition its own named rule, and let `match` and `reason` both use it rather than repeating the condition. (Style guide: "Use helper rules and functions")
-* Keep the policy self documenting. Comment only what a reader could not work out from the code, such as the units of a threshold.
+* Keep the policy self-documenting. Comment only what a reader could not work out from the code, such as the units of a threshold.
 
 ## Reason message
 
-* Name the value that triggered the policy, and the threshold it crossed if there is one, so a reader can see why it fired without going back through the package data.
-* Only name a value if it tells the reader something on its own. A CVSS score does. A list of vulnerability IDs does not, because the reader has to look each one up, and the decision log and web app already have them.
-* Never build a message inside an iteration. You get one message per finding, and the decision log grows with them. A policy that fires two different ways can have two messages, because that number does not grow.
+* Name the value that triggered the policy, and the threshold it crossed if there is one, so a reader can see why it fired without going back through the input data.
+* Only name a value if it tells the reader something on its own. A CVSS score does, but a list of vulnerability IDs does not, because the reader has to look each one up, and the decision log and web app already have them.
+* Don't build messages per result by putting them inside an iteration. Output a top-level message instead so that the decision log does not grow large. However, you can output a set number of messages if the policy fires multiple different ways, because that number is fixed.
 * Where the values are ordered, give the highest one rather than everything above the threshold.
 * Where they are not ordered, list what matched. Opt for a shorter type of list if it's likely to be long, such as grouping by category.
 * Accept reading the whole collection in order to name what matched. Stopping at the first match only saves work on packages that match, and most packages do not.
 
 ## Cost
 
-* Use a set and `in` when asking whether something is in a list. That is a hash lookup and the size of the set does not matter. Use a map when each entry needs a value attached, such as a minimum version per package. (Style guide: "Use `in` to check for membership", "Prefer sets over arrays (where applicable)")
+* Use a set and `in` when asking whether something is in a list, for the benefits of a hash lookup. Use a map when each entry needs a value attached, such as a minimum version per package. (Style guide: "Use `in` to check for membership", "Prefer sets over arrays (where applicable)")
 * Read a collection from the input once, into a single rule, then take your counts and checks from that rule rather than from the input again. Two rules that both scan `input.v0.osv` read it twice; one rule that collects what you need and two that read the result reads it once.
 * If you only need to know whether something exists, do not count, just stop at the first match. The exception is when you need the value for the message.
-* Avoid putting one loop inside another when the two are unrelated, because the body then runs once for every combination. Give each its own helper rule so they iterate independently.
+* Avoid putting one iteration underneath another when the two are unrelated, because the body then runs once for every combination. Give each its own helper rule so they iterate independently.
 * Put the cheapest, most selective check first in a rule body. Rego works down the body in order and abandons it at the first line that fails.
 
 ## Undefined
