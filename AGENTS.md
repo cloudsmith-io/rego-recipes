@@ -25,8 +25,7 @@ saying whether the policy actions apply, and `reason`, a set of messages explain
 
 ## Cost
 
-Generally, write for readability first and only reach for these when a policy is actually slow.
-(Style guide: "Optimize for readability, not performance")
+In general, optimize for readability and obviousness first (Style guide: "Optimize for readability, not performance"). The guidelines below do not hurt readability.
 
 * Use a set and `in` to ask whether something is in a list. This is an O(1) hash lookup, compared to an O(n) scan. Use a map when each entry needs a value attached, such as a minimum version per package. (Style guide: "Use `in` to check for membership", "Prefer sets over arrays (where applicable)")
 * To match on several fields at once, join them into one string with `sprintf` and look that up, rather than comparing field by field. `allowlist.rego` builds `python:example-lib:1.2.3` and checks it against a set written the same way.
@@ -38,7 +37,7 @@ Generally, write for readability first and only reach for these when a policy is
 
 A missing field is undefined, as is a builtin that cannot parse what it is given, such as `semver.compare` on an invalid version. A rule reading an undefined value becomes undefined too, so `match` never gets a value and falls back to the `default match := false`.
 
-A rule that matches on a field holding a particular value is fine, since a missing field leaves nothing to match. The risk is a rule that uses `not`, where a missing field is often the case it most needs to catch. Silently missing it is a fail open wherever matching blocks the package. Whether the missing field is caught depends on the form:
+A rule that matches on a field holding a particular value is fine, since a missing field leaves nothing to match. The risk is a rule that uses `not`, where a missing field is often the case it most needs to catch. Silently missing it is a fail open where a match blocks the package. Whether the missing field is caught depends on the form:
 
 | written as                              | when the field is missing |
 |-----------------------------------------| --- |
@@ -54,7 +53,7 @@ A rule that matches on a field holding a particular value is fine, since a missi
 * Where the field is optional, use one of the forms that comes out true. Give anything else its own rule and negate the rule, since an undefined rule negates to true. (Style guide: "Use negation to handle undefined")
 * Do not write `!= null` guards against a missing field. A missing field already makes the line undefined, so the guard adds nothing.
 * Use a form that comes out true when collecting the items that violate something. In a partial rule or a comprehension, an undefined form excludes only that item and the rest of the set is still built. That works fine if you're only gathering all the values that exist, but can silently omit an item with an undefined value if you're checking for those that do not match something particular.
-* Use `every` for "all of these", and guard it with `count(...) > 0` on the line above where an empty list should not count as all, since `every` is true over one. Where an undefined list should count as satisfying the check, use a negated helper rule instead. (Style guide: "Use `every` to express FOR ALL")
+* Use `every` for "all of these", and guard it with `count(...) > 0` on the line above where an empty list should not count as all, since `every` is true over an empty list. Where an undefined list should count as satisfying the check, use a negated helper rule instead. (Style guide: "Use `every` to express FOR ALL")
 
 ## Consistency
 
