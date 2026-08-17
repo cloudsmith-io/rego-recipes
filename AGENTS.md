@@ -37,7 +37,7 @@ In general, optimize for readability and obviousness first (Style guide: "Optimi
 
 A missing field is undefined, as is a builtin that cannot parse what it is given, such as `semver.compare` on an invalid version. A rule reading an undefined value becomes undefined too, so `match` never gets a value and falls back to the `default match := false`.
 
-A rule that matches on a field holding a particular value is fine, since a missing field leaves nothing to match. The risk is a rule that uses `not`, where a missing field is often the case it most needs to catch. Silently missing it is a fail open where a match blocks the package. Whether the missing field is caught depends on the form:
+A rule that matches on a field holding a particular value is fine, since a missing field leaves nothing to match. The risk is a rule that uses `not`, where a missing field is often the case it most needs to catch. Silently missing it is a fail open in policies where a match blocks the package. Whether the missing field is caught depends on the form:
 
 | written as                              | when the field is missing |
 |-----------------------------------------| --- |
