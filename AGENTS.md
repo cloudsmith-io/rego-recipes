@@ -53,8 +53,8 @@ A rule that matches on a field holding a particular value is fine, since a missi
 
 * Where the field is optional, use one of the forms that comes out true. Give anything else its own rule and negate the rule, since an undefined rule negates to true. (Style guide: "Use negation to handle undefined")
 * Do not write `!= null` guards against a missing field. An absent field already makes the line undefined, so the guard adds nothing.
-* Use the same forms inside an iteration, where an undefined one drops just that item and the rule carries on. `f.signature != "valid"` misses a file with no signature, where `not f.signature == "valid"` catches it.
-* Use `every` for "all of these", and guard it with `count(...) > 0` on the line above where an empty list should not count as all, since `every` is true over one. A missing list makes the rule undefined either way. (Style guide: "Use `every` to express FOR ALL")
+* The same forms apply inside an iteration, where an undefined one drops just that item and the rule carries on.
+* Use `every` for "all of these", and guard it with `count(...) > 0` on the line above where an empty list should not count as all, since `every` is true over one. Where an undefined list should count as satisfying the check, use a negated helper rule instead. (Style guide: "Use `every` to express FOR ALL")
 
 ## Consistency
 
