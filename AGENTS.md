@@ -52,7 +52,7 @@ A rule that matches on a field holding a particular value is fine, since a missi
 | `not foo(pkg.bar)`, builtin or your own | undefined |
 
 * Where the field is optional, use one of the forms that comes out true. Give anything else its own rule and negate the rule, since an undefined rule negates to true. (Style guide: "Use negation to handle undefined")
-* Do not write `!= null` guards against a missing field. An absent field already makes the line undefined, so the guard adds nothing.
+* Do not write `!= null` guards against a missing field. A missing field already makes the line undefined, so the guard adds nothing.
 * Use a form that comes out true when collecting the items that violate something. In a partial rule or a comprehension, an undefined form excludes only that item and the rest of the set is still built. That works fine if you're only gathering all the values that exist, but can silently omit an item with an undefined value if you're checking for those that do not match something particular.
 * Use `every` for "all of these", and guard it with `count(...) > 0` on the line above where an empty list should not count as all, since `every` is true over one. Where an undefined list should count as satisfying the check, use a negated helper rule instead. (Style guide: "Use `every` to express FOR ALL")
 
@@ -70,7 +70,7 @@ A rule that matches on a field holding a particular value is fine, since a missi
 
 ## Validation
 
-* Confirm a field exists before writing a policy against it. An absent field can lead to `match` becoming undefined.
+* Confirm a field exists before writing a policy against it. A missing field can lead to `match` becoming undefined.
 * Check field types and ranges against real data before relying on them. A number that is really a string, or a 0 to 1 value that is really 0 to 100, will make a policy match everything or nothing with no visible error.
 * Write test cases where optional fields are missing. Nothing errors when one is, so a test is the only way to find out what the policy actually does.
 * Run `opa fmt --write`, `opa check --strict` and `regal lint` before opening a PR. (Style guide: "Use strict mode")
