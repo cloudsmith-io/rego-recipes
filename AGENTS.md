@@ -36,23 +36,22 @@ Generally, write for readability first and only reach for these when a policy is
 
 ## Undefined
 
-A missing field is undefined, as is a builtin that cannot parse what it is given, such as `semver.compare` on an invalid version. A rule reading either is undefined too, so `match` never gets a value and falls back to the `default match := false`.
+A missing field is undefined, as is a builtin that cannot parse what it is given, such as `semver.compare` on an invalid version. A rule reading either becomes undefined too, so `match` never gets a value and falls back to the `default match := false`.
 
 A rule that matches on a field holding a particular value is fine, since a missing field leaves nothing to match. The risk is a rule that uses `not`, where a missing field is often the case it most needs to catch. Silently missing it is a fail open wherever matching blocks the package. Whether the missing field is caught depends on the form:
 
-| written as | when the field is missing |
-| --- | --- |
-| `not pkg.status` | true |
-| `not pkg.status == "SAFE"` | true |
-| `not scan_clean`, a rule | true |
-| `pkg.status != "SAFE"` | undefined |
-| `not pkg.count > 5`, and `<`, `>=`, `<=` | undefined |
-| `not pkg.status in allowed` | undefined |
-| `not count(pkg.files) == 0` | undefined |
-| `not is_safe(pkg.status)`, builtin or your own | undefined |
+| written as                              | when the field is missing |
+|-----------------------------------------| --- |
+| `not pkg.foo`                           | true |
+| `not pkg.foo == "bar"`                  | true |
+| `not foo_bar`, a rule                   | true |
+| `pkg.foo != "bar"`                      | undefined |
+| `not pkg.foo > 5`, and `<`, `>=`, `<=`  | undefined |
+| `not pkg.foo in bar`                    | undefined |
+| `not count(pkg.foo) == 0`               | undefined |
+| `not foo(pkg.bar)`, builtin or your own | undefined |
 
 * Where the field is optional, use one of the forms that comes out true. Give anything else its own rule and negate the rule, since an undefined rule negates to true. (Style guide: "Use negation to handle undefined")
-* Treat a field set to `null` as present rather than missing. `not pkg.signed` is true where `signed` is absent but undefined where it is `null`, so compare explicitly with `not pkg.signed == true`.
 * Do not write `!= null` guards against a missing field. An absent field already makes the line undefined, so the guard adds nothing.
 * Use the same forms inside an iteration, where an undefined one drops just that item and the rule carries on. `f.signature != "valid"` misses a file with no signature, where `not f.signature == "valid"` catches it.
 * Use `every` for "all of these", with `count(...) > 0` on the line above. A missing list makes the rule undefined, and an empty list makes `every` true. (Style guide: "Use `every` to express FOR ALL")
