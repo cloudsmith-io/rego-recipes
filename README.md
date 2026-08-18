@@ -74,7 +74,7 @@ These policies address common supply chain security requirements such as:
 ### tests/
 
 Unit tests mirroring `recipes/`, so `tests/license/copyleft_licenses_test.rego` covers
-`recipes/license/copyleft_licenses.rego`.
+`recipes/license/copyleft_licenses.rego`. Test cases cover optional fields that are missing.
 
 All policies use `package cloudsmith` and so cannot be compiled together. Run one policy
 against its test:
@@ -86,6 +86,7 @@ opa test recipes/license/copyleft_licenses.rego tests/license/copyleft_licenses_
 CI does the same thing for every test file, deriving the policy path from the test path,
 which means a test only runs if a policy exists at the matching path. It also runs
 `regal lint`, `opa fmt --fail` and `opa check` over both directories.
+
 
 ---
 

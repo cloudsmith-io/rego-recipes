@@ -8,6 +8,7 @@ saying whether the policy actions apply, and `reason`, a set of messages explain
 
 ## Structure
 
+* Start every policy with a `# METADATA` block immediately above `package cloudsmith`, with a `title` in sentence case and a one-line `description` of what it matches. (Style guide: "Use metadata annotations", [format](https://www.openpolicyagent.org/docs/policy-language#metadata))
 * Always declare `default match := false`. If `match` ends up undefined, it falls back to false instead of returning nothing.
 * Don't have `match` dependent on `reason`, e.g. avoid `match if count(reason) > 0`. An undefined message string would stop the policy matching. Work `match` out from the conditions themselves and let `reason` depend on `match`.
 * Write `reason` with `contains` (a partial set). `reason[msg] if { ... }` produces an object keyed by the message rather than a set of messages.
@@ -71,34 +72,3 @@ A rule that matches on a field holding a particular value is fine, since a missi
 
 * Confirm a field exists before writing a policy against it. A missing field can lead to `match` becoming undefined.
 * Check field types and ranges against real data before relying on them. A number that is really a string, or a 0 to 1 value that is really 0 to 100, will make a policy match everything or nothing with no visible error.
-* Write test cases where optional fields are missing. Nothing errors when one is, so a test is the only way to find out what the policy actually does.
-* Run `opa fmt --write`, `opa check --strict` and `regal lint` before opening a PR. (Style guide: "Use strict mode")
-
----
-
-# Policy METADATA
-(Style guide: "Use metadata annotations")
-
-- All new policies (and any existing policies you modify) should include METADATA comments at the top of the file
-- Place METADATA before the `package` declaration
-
-```rego
-# METADATA
-# title: <Display Title>
-# description: <Brief description of what the policy does>
-package cloudsmith
-```
-
-- `title`: short, human-readable display name in sentence case (e.g. "Malware block")
-- `description`: one-line summary of policy behaviour (e.g. "Block packages with detected malware vulnerabilities")
-- Follow the OPA METADATA annotations format: https://www.openpolicyagent.org/docs/policy-language#metadata
-
-# Running the tests
-
-Each test file mirrors the policy it covers: `tests/<group>/<name>_test.rego` tests
-`recipes/<group>/<name>.rego`. Every policy uses `package cloudsmith`, so they cannot be
-compiled together. Load one policy at a time alongside its test:
-
-```bash
-opa test recipes/vulnerability/malware.rego tests/vulnerability/malware_test.rego
-```
