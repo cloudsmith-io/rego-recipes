@@ -71,10 +71,11 @@ A rule that matches on a field holding a particular value is fine, since a missi
 * Prefer OPA's built-in functions over hand-rolled equivalents.
 * Use plain string functions (`contains`, `startswith`, `endswith`) when not matching structure, and regex only when position or pattern actually matters.
 * Use current builtins, such as `regex.match` rather than the deprecated `re_match`.
-* Only the "Wasm" [Rego Built-ins](https://www.openpolicyagent.org/docs/policy-reference/builtins) can currently be used, not the "SDK-dependent" built-ins. The exceptions to this, which can be used, are `semver_compare`, `semver_is_valid`, `sprintf`, `time_add_date`, `time_now_ns`, and `time_parse_rfc3339_ns`.
+* Only the "Wasm" [Rego Built-ins](https://www.openpolicyagent.org/docs/policy-reference/builtins) can currently be used, not the "SDK-dependent" built-ins. The exceptions to this, which can be used, are `semver.compare`, `semver.is_valid`, `sprintf`, `time.add_date`, `time.now_ns`, and `time.parse_rfc3339_ns`.
+* Check the docs page before using a built-in not already used in this repository. No linter or compiler catches this, so an unavailable built-in passes every check and then fails at evaluation.
 
 ## Validation
 
-* Confirm a field exists in the input schema before writing a policy against it. A missing field can lead to `match` becoming undefined.
+* Confirm a field exists in the input schema before writing a policy against it. A missing field can lead to `match` becoming undefined. The schema is the `PolicyInput` definition under `components.schemas` in the [Cloudsmith OpenAPI spec](https://api.cloudsmith.io/v2/openapi/?format=json).
 * Check field types and ranges against real data before relying on them. A number that is really a string, or a 0 to 1 value that is really 0 to 100, will make a policy match everything or nothing with no visible error.
 * Write the policy to succeed against `opa fmt`, `opa check --strict` and `regal lint`, as these will be checked against it later.

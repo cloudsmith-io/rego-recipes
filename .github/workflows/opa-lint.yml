@@ -26,8 +26,14 @@ jobs:
           chmod +x regal
           sudo mv regal /usr/local/bin/regal
 
+      - name: Fetch Input Schema
+        run: |
+          curl -sSf -o openapi.json 'https://api.cloudsmith.io/v2/openapi/?format=json'
+          jq '. as $r | $r.components.schemas.PolicyInput + {components: $r.components}' \
+            openapi.json > policy_input.json
+
       - name: Lint with Regal
-        run: regal lint recipes tests
+        run: regal lint --fail-level warning recipes tests
       - name: Format Check
         run: |
           if [ -d recipes ]; then
@@ -43,18 +49,20 @@ jobs:
 
       - name: Validate Policies
         run: |
-          find recipes tests -name "*.rego" -print0 | \
+          failed=0
           while IFS= read -r -d '' file; do
             echo "Checking $file"
-            opa check "$file"
-          done
+            opa check --strict --schema policy_input.json "$file" || failed=1
+          done < <(find recipes tests templates -name "*.rego" -print0)
+          exit $failed
 
       - name: Unit Test Policies
         run: |
-          find tests -name "*_test.rego" -print0 | \
+          failed=0
           while IFS= read -r -d '' test_file; do
             policy="recipes/${test_file#tests/}"
             policy="${policy/_test/}"
             echo "Testing $policy with $test_file"
-            opa test "$policy" "$test_file"
-          done
+            opa test "$policy" "$test_file" || failed=1
+          done < <(find tests -name "*_test.rego" -print0)
+          exit $failed
