@@ -89,9 +89,10 @@ which means a test only runs if a policy exists at the matching path. It also ru
 
 `opa check` is also given the `PolicyInput` schema from the
 [Cloudsmith OpenAPI spec](https://api.cloudsmith.io/v2/openapi/?format=json), so a field name
-that does not exist in `input.v0` fails the build. It does not catch everything: fields under
-`input.v0.package` are not checked, nor are fields read from a value that has passed through a
-helper rule, nor field names used in test files.
+that does not exist in `input.v0` fails the build. It does not catch everything: a field read
+inside a function from one of its arguments is unchecked, as are fields named in test files. It
+also cannot tell one package format from another, so it does not catch fields from a regular
+package and a Hugging Face package being incorrectly mixed.
 
 
 ---

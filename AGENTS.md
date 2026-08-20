@@ -1,3 +1,8 @@
+<!-- generator:ignore-start -->
+> **Note:** This file is inlined into the Cloudsmith policy generator's system
+> prompt. Keep edits focused on authoring guidance. Guidance specific to this repository, such as CI and tests, is in README.md.
+<!-- generator:ignore-end -->
+
 # Guidelines
 
 These build on the [Rego Style Guide](https://www.openpolicyagent.org/docs/style-guide), which also applies.

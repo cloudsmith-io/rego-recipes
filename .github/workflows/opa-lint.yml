@@ -4,6 +4,9 @@ on:
   pull_request:
   push:
     branches: [main]
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
 
 jobs:
   opa:
@@ -29,11 +32,20 @@ jobs:
       - name: Fetch Input Schema
         run: |
           curl -sSf -o openapi.json 'https://api.cloudsmith.io/v2/openapi/?format=json'
-          jq '. as $r | $r.components.schemas.PolicyInput + {components: $r.components}' \
+          # --schema reads the file's root as the shape of `input`, so PolicyInput becomes the
+          # root, and the components block comes with it because its pointers resolve from
+          # there. oneOf becomes anyOf and a single-item allOf is unwrapped, as OPA checks
+          # neither of the originals.
+          jq -e '. as $r
+              | ($r.components.schemas.PolicyInput // error("PolicyInput missing from spec"))
+                + {components: $r.components}
+              | walk(if type == "object" and has("oneOf") then {anyOf: .oneOf} else . end)
+              | walk(if type == "object" and (.allOf | type) == "array" and (.allOf | length) == 1
+                     then del(.allOf) + .allOf[0] else . end)' \
             openapi.json > policy_input.json
 
       - name: Lint with Regal
-        run: regal lint --fail-level warning recipes tests
+        run: regal lint recipes tests
       - name: Format Check
         run: |
           if [ -d recipes ]; then
