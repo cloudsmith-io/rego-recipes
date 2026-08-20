@@ -4,8 +4,6 @@ on:
   pull_request:
   push:
     branches: [main]
-  schedule:
-    - cron: "0 7 * * *"
   workflow_dispatch:
 
 jobs:
@@ -17,7 +15,8 @@ jobs:
 
       - name: Install OPA
         run: |
-          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          version="$(cat .opa-version)"
+          curl -sSfL -o opa "https://openpolicyagent.org/downloads/v${version}/opa_linux_amd64_static"
           chmod +x opa
           sudo mv opa /usr/local/bin/
 
