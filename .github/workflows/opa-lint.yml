@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   opa:
@@ -14,7 +15,8 @@ jobs:
 
       - name: Install OPA
         run: |
-          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          version="$(cat .opa-version)"
+          curl -sSfL -o opa "https://openpolicyagent.org/downloads/v${version}/opa_linux_amd64_static"
           chmod +x opa
           sudo mv opa /usr/local/bin/
 
@@ -26,19 +28,29 @@ jobs:
           chmod +x regal
           sudo mv regal /usr/local/bin/regal
 
+      - name: Fetch Input Schema
+        run: |
+          curl -sSf -o openapi.json 'https://api.cloudsmith.io/v2/openapi/?format=json'
+          # --schema reads the file's root as the shape of `input`, so PolicyInput becomes the
+          # root, and the components block comes with it because its pointers resolve from
+          # there. oneOf becomes anyOf and a single-item allOf is unwrapped, as OPA checks
+          # neither of the originals.
+          jq -e '. as $r
+              | ($r.components.schemas.PolicyInput // error("PolicyInput missing from spec"))
+                + {components: $r.components}
+              | walk(if type == "object" and has("oneOf") then {anyOf: .oneOf} else . end)
+              | walk(if type == "object" and (.allOf | type) == "array" and (.allOf | length) == 1
+                     then del(.allOf) + .allOf[0] else . end)' \
+            openapi.json > policy_input.json
+
       - name: Lint with Regal
-        run: regal lint baseline advanced tests
+        run: regal lint recipes tests
       - name: Format Check
         run: |
-          if [ -d baseline ]; then
-            opa fmt --fail baseline
+          if [ -d recipes ]; then
+            opa fmt --fail recipes
           else
-            echo "No baseline folder"
-          fi
-          if [ -d advanced ]; then
-            opa fmt --fail advanced
-          else
-            echo "No advanced folder"
+            echo "No recipes folder"
           fi
           if [ -d tests ]; then
             opa fmt --fail tests
@@ -48,18 +60,20 @@ jobs:
 
       - name: Validate Policies
         run: |
-          find baseline advanced tests -name "*.rego" -print0 | \
+          failed=0
           while IFS= read -r -d '' file; do
             echo "Checking $file"
-            opa check "$file"
-          done
+            opa check --strict --schema policy_input.json "$file" || failed=1
+          done < <(find recipes tests templates -name "*.rego" -print0)
+          exit $failed
 
       - name: Unit Test Policies
         run: |
-          find tests -name "*_test.rego" -print0 | \
+          failed=0
           while IFS= read -r -d '' test_file; do
-            policy="${test_file/tests\//}"
+            policy="recipes/${test_file#tests/}"
             policy="${policy/_test/}"
             echo "Testing $policy with $test_file"
-            opa test "$policy" "$test_file"
-          done
+            opa test "$policy" "$test_file" || failed=1
+          done < <(find tests -name "*_test.rego" -print0)
+          exit $failed

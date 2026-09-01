@@ -1,0 +1,27 @@
+# METADATA
+# title: Debug artifacts in release repositories
+# description: Match debug build artifacts published to a release repository.
+package cloudsmith
+
+default match := false
+
+pkg := input.v0.package
+
+debug_markers := {"debug", "test", "tmp"}
+
+filename := lower(pkg.filename)
+
+repository := input.v0.repository.name
+
+release_repository if endswith(repository, "-releases")
+
+match if {
+	release_repository
+	some marker in debug_markers
+	contains(filename, marker)
+}
+
+reason contains msg if {
+	match
+	msg := sprintf("Debug artifact published to release repository: %s in %s", [filename, repository])
+}

@@ -3,17 +3,13 @@
 # description: Match packages that are explicitly allowlisted by format, name, and version.
 package cloudsmith
 
-############################################################
-# TEMPLATE FILE — EDIT THIS TEMPLATE; GENERATED REGO IS PRODUCED FROM IT
-# Managed by exemption workflow; generated Rego output may be marked as DO NOT EDIT
-############################################################
-
 default match := false
 
 pkg := input.v0.package
 
 allowlist := {
-{{ENTRIES}}
+	"python:example-lib:1.2.3",
+	"npm:example-ui:4.5.6",
 }
 
 format_name_version := sprintf("%s:%s:%s", [pkg.format, pkg.name, pkg.version])

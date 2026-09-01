@@ -1,0 +1,1 @@
+../recipes/format-name-version/allowlist.rego

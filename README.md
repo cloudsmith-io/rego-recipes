@@ -24,9 +24,15 @@ These policies are intended to be readable, predictable, and suitable for enterp
 ## Repository Structure
 
 ```
-baseline/
-advanced/
-legacy/
+recipes/
+  date-time/
+  format-name-version/
+  hugging-face/
+  license/
+  metadata/
+  vulnerability/
+templates/
+tests/
 exemptions/
   allow.json
   update_policy.py
@@ -37,9 +43,23 @@ exemptions/
   apply-exemptions.yml
 ```
 
-### baseline/
+### recipes/
 
-Recommended secure defaults for production environments.
+All Rego policies grouped by category:
+
+- `date-time/` — cooldown windows and change freezes, based on publish and upload dates
+- `format-name-version/` — allowlists, blocklists, minimum versions, filename conventions
+- `hugging-face/` — model cards, risky file formats, security scan results, verified publishers
+- `license/` — declared licenses and SBOM component licenses
+- `metadata/` — architectures and tags
+- `vulnerability/` — CVSS and EPSS scores, vulnerability ID blocklists, malware
+
+---
+
+### templates/
+
+The subset of recipes that appear as templates in the Cloudsmith web app. Each entry is
+a symlink to a file under `recipes/`.
 
 These policies address common supply chain security requirements such as:
 
@@ -49,36 +69,31 @@ These policies address common supply chain security requirements such as:
 - Workflows using package age  
 - Explicit allowlist and blocklist handling  
 
-If you are deploying policy as code in a new workspace, start here.
-
 ---
 
-### advanced/
+### tests/
 
-Optional or format-specific policies that provide deeper governance controls.
+Unit tests mirroring `recipes/`, so `tests/license/copyleft_licenses_test.rego` covers
+`recipes/license/copyleft_licenses.rego`. Test cases cover optional fields that are missing.
 
-These may include:
+All policies use `package cloudsmith` and so cannot be compiled together. Run one policy
+against its test:
 
-- Base image origin enforcement  
-- SBOM-based controls  
-- Model governance policies  
-- Specialized workflow patterns  
+```bash
+opa test recipes/license/copyleft_licenses.rego tests/license/copyleft_licenses_test.rego
+```
 
-Advanced policies are production-ready but not universally required.
+CI does the same thing for every test file, deriving the policy path from the test path,
+which means a test only runs if a policy exists at the matching path. It also runs
+`regal lint`, `opa fmt --fail` and `opa check --strict` over both directories.
 
----
+`opa check` is also given the `PolicyInput` schema from the
+[Cloudsmith OpenAPI spec](https://api.cloudsmith.io/v2/openapi/?format=json), so a field name
+that does not exist in `input.v0` fails the build. It does not catch everything: a field read
+inside a function from one of its arguments is unchecked, as are fields named in test files. It
+also cannot tell one package format from another, so it does not catch fields from a regular
+package and a Hugging Face package being incorrectly mixed.
 
-### legacy/
-
-Historical recipes and experimental policies retained for reference.
-
-Policies in this directory:
-
-- May use older patterns  
-- May not reflect current schema or best practices  
-- Are not recommended for new deployments  
-
-They are preserved for documentation history and migration reference.
 
 ---
 
@@ -100,13 +115,12 @@ All policies in this repository are designed to be non-terminal and composable.
 
 A recommended precedence pattern for baseline deployments is:
 
-1. Package age restore (make eligible packages available again)
-2. Package age quarantine (time-based quarantine)
-3. License policy (tagging or governance)
-4. High-risk vulnerability policy (quarantine based on thresholds)
-5. Exact allowlist exemption (explicit override)
-6. Exact blocklist (explicit deny)
-7. Malware block (final quarantine safeguard)
+1. Cooldown period (time-based quarantine)
+2. License policy (tagging or governance)
+3. High-risk vulnerability policy (quarantine based on thresholds)
+4. Exact allowlist exemption (explicit override)
+5. Exact blocklist (explicit deny)
+6. Malware block (final quarantine safeguard)
 
 All matched policy actions are applied within a single transaction.  
 The package state visible to users reflects the final committed result.
@@ -118,7 +132,7 @@ https://docs.cloudsmith.com/supply-chain-security/epm
 
 ## Managing exemptions (GitOps workflow)
 
-The allowlist policy in `baseline/` supports a GitOps-based exemption workflow.
+The allowlist policy in `templates/` supports a GitOps-based exemption workflow.
 Rather than editing policies manually, exemptions are stored in Git, reviewed via
 Pull Requests, and automatically applied to Cloudsmith on merge.
 
@@ -140,7 +154,7 @@ Pull Requests, and automatically applied to Cloudsmith on merge.
 
 Policy as code embeds exemption data directly in Rego. Managing exemptions via Git provides auditability, an approval gate, rollback capability, and a scalable alternative to manual policy edits.
 
-The allowlist exemption policy should be placed at a higher precedence than the vulnerability policy (position 5 in the recommended ordering above) so that explicitly approved packages bypass security enforcement.
+The allowlist exemption policy should be placed at a higher precedence than the vulnerability policy (position 4 in the recommended ordering above) so that explicitly approved packages bypass security enforcement.
 
 ---
 
