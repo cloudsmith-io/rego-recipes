@@ -30,6 +30,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install requests
+      
+      - name: Validate allow.json
+        run: python exemptions/validate_allowlist.py
 
       - name: Apply exemptions
         env:
