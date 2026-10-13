@@ -24,9 +24,15 @@ jobs:
         run: opa version
       - name: Install Regal
         run: |
-          curl -L -o regal https://github.com/StyraInc/regal/releases/latest/download/regal_Linux_x86_64
-          chmod +x regal
-          sudo mv regal /usr/local/bin/regal
+          version="$(cat .regal-version)"
+          base="https://github.com/open-policy-agent/regal/releases/download/v${version}"
+          curl -sSfL -o regal_Linux_x86_64 "${base}/regal_Linux_x86_64"
+          curl -sSfL -o checksums.txt "${base}/checksums.txt"
+          sha256sum --check --ignore-missing checksums.txt
+          chmod +x regal_Linux_x86_64
+          sudo mv regal_Linux_x86_64 /usr/local/bin/regal
+      - name: Show Regal Version
+        run: regal version
 
       - name: Fetch Input Schema
         run: |
