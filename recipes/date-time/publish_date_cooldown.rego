@@ -3,8 +3,6 @@
 # description: Hide newly published versions of packages from your repository index until they reach a minimum age
 package cloudsmith
 
-import rego.v1
-
 default match := false
 
 # Cooldown window in days. Packages whose upstream publish date is more

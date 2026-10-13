@@ -23,5 +23,5 @@ match if {
 
 reason contains msg if {
 	match
-	msg := sprintf("Debug artifact published to release repository: %s in %s", [filename, repository])
+	msg := $"Debug artifact published to release repository: {filename} in {repository}"
 }

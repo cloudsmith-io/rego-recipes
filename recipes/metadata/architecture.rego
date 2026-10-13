@@ -18,5 +18,5 @@ match if count(disallowed_architectures) > 0
 
 reason contains msg if {
 	match
-	msg := sprintf("Architecture disallowed: %v. Allowed: %v", [disallowed_architectures, allowed_architectures])
+	msg := $"Architecture disallowed: {disallowed_architectures}. Allowed: {allowed_architectures}"
 }

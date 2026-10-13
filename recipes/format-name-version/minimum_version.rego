@@ -12,7 +12,7 @@ minimum_versions := {
 	"npm:example-ui": "4.5.0",
 }
 
-format_name := sprintf("%s:%s", [pkg.format, pkg.name])
+format_name := $"{pkg.format}:{pkg.name}"
 
 minimum_version := minimum_versions[format_name]
 
@@ -30,10 +30,10 @@ match if unparseable_version
 
 reason contains msg if {
 	below_minimum
-	msg := sprintf("Version %s is older than the minimum permitted %s", [pkg.version, minimum_version])
+	msg := $"Version {pkg.version} is older than the minimum permitted {minimum_version}"
 }
 
 reason contains msg if {
 	unparseable_version
-	msg := sprintf("Version cannot be checked against the minimum permitted %s", [minimum_version])
+	msg := $"Version cannot be checked against the minimum permitted {minimum_version}"
 }

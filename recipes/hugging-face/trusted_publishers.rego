@@ -20,4 +20,4 @@ match if {
 	publisher in verified_publishers
 }
 
-reason contains sprintf("Published by verified organisation %s", [publisher]) if match
+reason contains $"Published by verified organisation {publisher}" if match

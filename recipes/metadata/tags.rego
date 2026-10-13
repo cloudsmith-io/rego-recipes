@@ -22,5 +22,5 @@ exceeds_tags if tag_count > max_tags
 match if has_tag
 match if exceeds_tags
 
-reason contains sprintf("Package is tagged '%s'", [tag_name]) if has_tag
-reason contains sprintf("Package has %d tags, exceeding the limit of %d", [tag_count, max_tags]) if exceeds_tags
+reason contains $"Package is tagged '{tag_name}'" if has_tag
+reason contains $"Package has {tag_count} tags, exceeding the limit of {max_tags}" if exceeds_tags

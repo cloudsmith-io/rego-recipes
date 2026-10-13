@@ -17,4 +17,4 @@ blocked_found contains dataset if {
 
 match if count(blocked_found) > 0
 
-reason contains sprintf("Model is trained on blocked datasets: %v", [blocked_found]) if match
+reason contains $"Model is trained on blocked datasets: {blocked_found}" if match

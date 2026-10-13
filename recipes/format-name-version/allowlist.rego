@@ -12,8 +12,8 @@ allowlist := {
 	"npm:example-ui:4.5.6",
 }
 
-format_name_version := sprintf("%s:%s:%s", [pkg.format, pkg.name, pkg.version])
+format_name_version := $"{pkg.format}:{pkg.name}:{pkg.version}"
 
 match if format_name_version in allowlist
 
-reason contains sprintf("Matched by allowlist: %s", [format_name_version]) if match
+reason contains $"Matched by allowlist: {format_name_version}" if match

@@ -36,4 +36,4 @@ risky_found contains file.file_extension if {
 
 match if count(risky_found) > 0
 
-reason contains sprintf("Model contains risky file formats: %v", [risky_found]) if match
+reason contains $"Model contains risky file formats: {risky_found}" if match

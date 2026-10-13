@@ -16,4 +16,4 @@ match if {
 	not regex.match(filename_pattern, pkg.filename)
 }
 
-reason contains sprintf("Filename does not follow the required convention: %s", [pkg.filename]) if match
+reason contains $"Filename does not follow the required convention: {pkg.filename}" if match

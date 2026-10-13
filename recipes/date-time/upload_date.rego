@@ -17,4 +17,4 @@ match if {
 	uploaded_at < time.parse_rfc3339_ns(freeze_end)
 }
 
-reason contains sprintf("Uploaded during the change freeze from %s to %s", [freeze_start, freeze_end]) if match
+reason contains $"Uploaded during the change freeze from {freeze_start} to {freeze_end}" if match

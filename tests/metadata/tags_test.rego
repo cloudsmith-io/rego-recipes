@@ -4,7 +4,7 @@ _input(tags) := {"v0": {"package": {"tags": tags}}}
 
 _tags(n) := [tag |
 	some i in numbers.range(1, n)
-	tag := {"name": sprintf("tag-%d", [i])}
+	tag := {"name": $"tag-{i}"}
 ]
 
 test_match_deprecated_tag if {

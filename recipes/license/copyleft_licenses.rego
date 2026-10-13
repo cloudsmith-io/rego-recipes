@@ -80,4 +80,4 @@ copyleft_found contains entry.license.id if {
 
 match if count(copyleft_found) > 0
 
-reason contains sprintf("Copyleft licenses detected: %v", [copyleft_found]) if match
+reason contains $"Copyleft licenses detected: {copyleft_found}" if match
