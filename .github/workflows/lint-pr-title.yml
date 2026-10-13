@@ -1,0 +1,39 @@
+name: Lint PR title
+
+on:
+  # Runs from main so fork PRs get a token. No step checks out PR code, so it is safe.
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+permissions: {}
+
+jobs:
+  main:
+    name: Validate PR title
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+    steps:
+      # The PR title becomes the squash commit message, which release-please reads to build the changelog.
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            perf
+            revert
+            docs
+            refactor
+            test
+            ci
+            chore
+          # Any scope is allowed, so a change to a policy can be scoped by its name and the
+          # changelog line reads e.g. "cvss_with_fix: ...".
+          requireScope: false
