@@ -85,7 +85,9 @@ opa test recipes/license/copyleft_licenses.rego tests/license/copyleft_licenses_
 
 CI does the same thing for every test file, deriving the policy path from the test path,
 which means a test only runs if a policy exists at the matching path. It also runs
-`regal lint`, `opa fmt --fail` and `opa check --strict` over both directories.
+`regal lint`, `opa fmt --fail` and `opa check --strict` over both directories. The OPA and
+Regal versions are pinned in `.opa-version` and `.regal-version`; match them locally so lint
+results agree with CI.
 
 `opa check` is also given the `PolicyInput` schema from the
 [Cloudsmith OpenAPI spec](https://api.cloudsmith.io/v2/openapi/?format=json), so a field name
