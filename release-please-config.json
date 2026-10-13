@@ -6,7 +6,7 @@
   "changelog-sections": [
     { "type": "feat", "section": "New policies" },
     { "type": "fix", "section": "Policy corrections" },
-    { "type": "perf", "section": "Optimisations" },
+    { "type": "perf", "section": "Optimizations" },
     { "type": "revert", "section": "Reverts" },
     { "type": "docs", "section": "Documentation" },
     { "type": "refactor", "section": "Refactoring", "hidden": true },

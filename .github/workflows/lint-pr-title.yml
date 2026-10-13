@@ -1,7 +1,8 @@
 name: Lint PR title
 
 on:
-  pull_request:
+  # Runs from main so fork PRs get a token. No step checks out PR code, so it is safe.
+  pull_request_target:
     types:
       - opened
       - edited
@@ -40,4 +41,5 @@ jobs:
             exemptions
             guidelines
             deps
+            main
           requireScope: false
