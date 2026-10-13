@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "simple",
+  "include-v-in-tag": true,
+  "bootstrap-sha": "fb6e34c937267ba07712ef32a9d216b1ca1ccd38",
+  "changelog-sections": [
+    { "type": "feat", "section": "New policies" },
+    { "type": "fix", "section": "Policy corrections" },
+    { "type": "perf", "section": "Optimisations" },
+    { "type": "revert", "section": "Reverts" },
+    { "type": "docs", "section": "Documentation" },
+    { "type": "refactor", "section": "Refactoring", "hidden": true },
+    { "type": "test", "section": "Tests", "hidden": true },
+    { "type": "ci", "section": "CI", "hidden": true },
+    { "type": "chore", "section": "Chores", "hidden": true }
+  ],
+  "packages": {
+    ".": {}
+  }
+}
