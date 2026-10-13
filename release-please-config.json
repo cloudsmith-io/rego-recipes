@@ -4,7 +4,7 @@
   "include-v-in-tag": true,
   "bootstrap-sha": "fb6e34c937267ba07712ef32a9d216b1ca1ccd38",
   "changelog-sections": [
-    { "type": "feat", "section": "New policies" },
+    { "type": "feat", "section": "New policies and features" },
     { "type": "fix", "section": "Policy corrections" },
     { "type": "perf", "section": "Optimizations" },
     { "type": "revert", "section": "Reverts" },

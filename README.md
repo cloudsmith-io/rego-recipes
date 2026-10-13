@@ -160,6 +160,30 @@ The allowlist exemption policy should be placed at a higher precedence than the 
 
 ---
 
+## Releases and changelog
+
+Changes are published as [GitHub Releases](https://github.com/cloudsmith-io/rego-recipes/releases)
+with a [changelog](CHANGELOG.md). To be notified, choose Watch → Custom → Releases on this
+repository, or subscribe to the
+[releases feed](https://github.com/cloudsmith-io/rego-recipes/releases.atom).
+
+Pull request titles follow [Conventional Commits](https://www.conventionalcommits.org/) and
+become the changelog entries, so write them for someone using the policies. Scope a change to
+one policy by its file name:
+
+| Title | Changelog section |
+| --- | --- |
+| `feat(trusted_publishers): add Hugging Face trusted publishers policy` | New policies and features |
+| `fix(publish_date_cooldown): match packages with no upstream publish date` | Policy corrections |
+| `perf(blocklist): look up entries in a set instead of scanning` | Optimizations |
+| `docs: add exception workflow to README` | Documentation |
+| `ci:`, `chore:`, `test:`, `refactor:` | not listed |
+
+Add `!` after the scope, with a `BREAKING CHANGE:` footer saying what now matches differently,
+when a change alters which packages a policy matches, e.g. `fix(cvss_with_fix)!: ...`.
+
+---
+
 ## Deployment
 
 Policies can be deployed using the Cloudsmith webapp, API and the Cloudsmith Terraform Provider. 

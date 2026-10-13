@@ -34,12 +34,6 @@ jobs:
             test
             ci
             chore
-          scopes: |
-            recipe
-            template
-            baseline
-            exemptions
-            guidelines
-            deps
-            main
+          # Any scope is allowed, so a change to a policy can be scoped by its name and the
+          # changelog line reads e.g. "cvss_with_fix: ...".
           requireScope: false
