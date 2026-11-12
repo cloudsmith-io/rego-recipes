@@ -25,6 +25,7 @@ These policies are intended to be readable, predictable, and suitable for enterp
 
 ```
 recipes/
+  athena/
   date-time/
   format-name-version/
   hugging-face/
@@ -47,6 +48,7 @@ exemptions/
 
 All Rego policies grouped by category:
 
+- `athena/` — packages and images affected by Chainguard's Athena coordinated vulnerability disclosures
 - `date-time/` — cooldown windows and change freezes, based on publish and upload dates
 - `format-name-version/` — allowlists, blocklists, minimum versions, filename conventions
 - `hugging-face/` — model cards, risky file formats, security scan results, verified publishers
