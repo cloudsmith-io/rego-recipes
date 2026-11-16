@@ -29,16 +29,16 @@ test_no_match_safe_file_extension if {
 	not data.cloudsmith.match with input as _upstream_hf_pkg([{"file_extension": ".txt"}])
 }
 
-test_no_match_not_upstream if {
-	not data.cloudsmith.match with input as {"v0": {"package": {
+test_match_not_upstream if {
+	data.cloudsmith.match with input as {"v0": {"package": {
 		"format": "huggingface",
 		"uploader": {"slug": "other-user"},
 		"files": [{"file_extension": ".bin"}],
 	}}}
 }
 
-test_no_match_missing_uploader if {
-	not data.cloudsmith.match with input as {"v0": {"package": {
+test_match_missing_uploader if {
+	data.cloudsmith.match with input as {"v0": {"package": {
 		"format": "huggingface",
 		"files": [{"file_extension": ".bin"}],
 	}}}

@@ -26,7 +26,6 @@ risky_file_extensions := {
 
 risky_found contains file.file_extension if {
 	pkg.format == "huggingface"
-	is_upstream_pkg
 	some file in pkg.files
 	file.file_extension in risky_file_extensions
 }
