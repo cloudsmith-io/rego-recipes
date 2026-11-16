@@ -7,9 +7,6 @@ default match := false
 
 pkg := input.v0.package
 
-# Upstream packages are fetched by a system user.
-is_upstream_pkg if pkg.uploader.slug == "cloudsmith-o6v"
-
 # Formats and their extensions
 # H5 (.h5, .hdf5)
 # Paddle (.pdparams)
