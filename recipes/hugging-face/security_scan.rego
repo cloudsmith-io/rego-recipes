@@ -7,8 +7,12 @@ default match := false
 
 pkg := input.v0.package
 
-# Upstream packages are fetched by a system user.
-is_upstream_pkg if pkg.uploader.slug == "cloudsmith-o6v"
+# Upstream packages are fetched from upstream
+is_upstream_pkg if {
+	some tag in pkg.tags
+	tag.name == "upstream"
+	tag.source == "AUTOMATIC"
+}
 
 scan_clean if {
 	input.v0.model_security.availability == "COMPLETE"
