@@ -7,9 +7,6 @@ default match := false
 
 pkg := input.v0.package
 
-# Upstream packages are fetched by a system user.
-is_upstream_pkg if pkg.uploader.slug == "cloudsmith-o6v"
-
 # Formats and their extensions
 # H5 (.h5, .hdf5)
 # Paddle (.pdparams)
@@ -29,7 +26,6 @@ risky_file_extensions := {
 
 risky_found contains file.file_extension if {
 	pkg.format == "huggingface"
-	is_upstream_pkg
 	some file in pkg.files
 	file.file_extension in risky_file_extensions
 }
