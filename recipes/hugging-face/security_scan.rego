@@ -50,4 +50,10 @@ match if {
 	count(malicious_files) > 0
 }
 
-reason contains sprintf("Hugging Face Hub scanners found malicious content in %d file(s): %v", [count(malicious_files), sort(malicious_files)]) if match
+reason contains msg if {
+	match
+	msg := sprintf(
+		"Hugging Face Hub scanners found malicious content in %d file(s): %v",
+		[count(malicious_files), sort(malicious_files)],
+	)
+}
