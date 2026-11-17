@@ -36,7 +36,10 @@ advisories := [
 		"id": "CGP-29c2-rpxq-q9xm",
 		"group": "com.github.tomakehurst", "artifact": "wiremock-standalone",
 		"cvss": 4.8, "cwe": "CWE-22",
-		"title": "AbstractFileSource path containment check uses startsWith() without a separator, allowing sibling-directory escape in Wi",
+		"title": concat("", [
+			"AbstractFileSource path containment check uses startsWith() without a separator, allowing sibling-directory ",
+			"escape in Wi",
+		]),
 		"open_from": "",
 		"versions": {
 			"2.16.0", "2.17.0", "2.18.0", "2.19.0", "2.20.0", "2.21.0", "2.22.0", "2.23.0", "2.23.1", "2.23.2",
@@ -48,7 +51,10 @@ advisories := [
 		"id": "CGP-3x2p-3qw2-2ghh",
 		"group": "org.apache.kerby", "artifact": "kerb-server",
 		"cvss": 10.0, "cwe": "CWE-347",
-		"title": "TokenPreauth in kerb-server 2.0.2 skips JWT signature verification when the request arrives over HTTPS, allowing forged ",
+		"title": concat("", [
+			"TokenPreauth in kerb-server 2.0.2 skips JWT signature verification when the request arrives over HTTPS, ",
+			"allowing forged ",
+		]),
 		"open_from": "",
 		"versions": {"1.0.0", "1.0.1", "1.1.0", "1.1.1", "2.0.0", "2.0.1", "2.0.2", "2.0.3"},
 	},
@@ -56,7 +62,10 @@ advisories := [
 		"id": "CGP-48gv-xfgw-w4hc",
 		"group": "com.github.tomakehurst", "artifact": "wiremock-standalone",
 		"cvss": 6.5, "cwe": "CWE-22",
-		"title": "WireMock DeleteStubFileTask deletes files via user-supplied path with no root-containment check, enabling path traversal",
+		"title": concat("", [
+			"WireMock DeleteStubFileTask deletes files via user-supplied path with no root-containment check, enabling ",
+			"path traversal",
+		]),
 		"open_from": "",
 		"versions": {
 			"2.14.0", "2.15.0", "2.16.0", "2.17.0", "2.18.0", "2.19.0", "2.20.0", "2.21.0", "2.22.0", "2.23.0",
@@ -68,7 +77,10 @@ advisories := [
 		"id": "CGP-69ph-rh6g-rg3p",
 		"group": "org.apache.qpid", "artifact": "qpid-broker-core",
 		"cvss": 3.7, "cwe": "CWE-208",
-		"title": "Non-constant-time password comparison in AbstractPasswordFilePrincipalDatabase enables timing side-channel credential re",
+		"title": concat("", [
+			"Non-constant-time password comparison in AbstractPasswordFilePrincipalDatabase enables timing side-channel ",
+			"credential re",
+		]),
 		"open_from": "",
 		"versions": {
 			"0.26", "0.28", "0.30", "0.32", "6.0.0", "6.0.1", "6.0.2", "6.0.3", "6.0.4", "6.0.5", "6.0.6",
@@ -83,7 +95,10 @@ advisories := [
 		"id": "CGP-753c-3hg7-j33f",
 		"group": "io.jsonwebtoken", "artifact": "jjwt",
 		"cvss": 6.2, "cwe": "CWE-400",
-		"title": "io.jsonwebtoken:jjwt 0.9.1 decompresses attacker-controlled JWT payloads before signature verification, enabling zip-bom",
+		"title": concat("", [
+			"io.jsonwebtoken:jjwt 0.9.1 decompresses attacker-controlled JWT payloads before signature verification, ",
+			"enabling zip-bom",
+		]),
 		"open_from": "",
 		"versions": {"0.6.0", "0.7.0", "0.8.0", "0.9.0", "0.9.1"},
 	},
@@ -91,7 +106,10 @@ advisories := [
 		"id": "CGP-76vm-gg49-hx7p",
 		"group": "com.sun.xml.messaging.saaj", "artifact": "saaj-impl",
 		"cvss": 6.7, "cwe": "CWE-611",
-		"title": "Unhardened XMLInputFactory in lazy StAX SOAP body path enables XXE file read, SSRF, and DoS when saaj.lazy.soap.body is ",
+		"title": concat("", [
+			"Unhardened XMLInputFactory in lazy StAX SOAP body path enables XXE file read, SSRF, and DoS when ",
+			"saaj.lazy.soap.body is ",
+		]),
 		"open_from": "3.0.6",
 		"versions": {
 			"1.3", "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5", "1.3.6", "1.3.7", "1.3.8", "1.3.9", "1.3.10",
@@ -105,7 +123,10 @@ advisories := [
 		"id": "CGP-8339-r3p5-6gh4",
 		"group": "org.javassist", "artifact": "javassist",
 		"cvss": 7.5, "cwe": "CWE-36",
-		"title": "Webserver.doReply() allows reading arbitrary files via a double-slash HTTP request that bypasses the docroot containment",
+		"title": concat("", [
+			"Webserver.doReply() allows reading arbitrary files via a double-slash HTTP request that bypasses the docroot ",
+			"containment",
+		]),
 		"open_from": "",
 		"versions": {
 			"3.13.0-GA", "3.14.0-GA", "3.15.0-GA", "3.16.1-GA", "3.17.0-GA", "3.17.1-GA", "3.18.0-GA",
@@ -119,7 +140,10 @@ advisories := [
 		"id": "CGP-9x7f-cpwh-f59q",
 		"group": "org.javassist", "artifact": "javassist",
 		"cvss": 5.3, "cwe": "CWE-404",
-		"title": "Webserver.process() does not close the client socket on exception, leaking file descriptors; a malformed request line al",
+		"title": concat("", [
+			"Webserver.process() does not close the client socket on exception, leaking file descriptors; a malformed ",
+			"request line al",
+		]),
 		"open_from": "",
 		"versions": {
 			"3.13.0-GA", "3.14.0-GA", "3.15.0-GA", "3.16.1-GA", "3.17.0-GA", "3.17.1-GA", "3.18.0-GA",
@@ -133,7 +157,10 @@ advisories := [
 		"id": "CGP-gcrw-87qp-x4c3",
 		"group": "com.googlecode.libphonenumber", "artifact": "libphonenumber",
 		"cvss": 6.2, "cwe": "CWE-1333",
-		"title": "PhoneNumberUtil.isAlphaNumber() bypasses the MAX_INPUT_STRING_LENGTH guard, enabling O(n\u00b2) ReDoS via VALID_PHONE_NUMBER_",
+		"title": concat("", [
+			"PhoneNumberUtil.isAlphaNumber() bypasses the MAX_INPUT_STRING_LENGTH guard, enabling O(n\u00b2) ReDoS via ",
+			"VALID_PHONE_NUMBER_",
+		]),
 		"open_from": "",
 		"versions": {
 			"3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4.0", "4.1", "4.2", "4.3", "4.4",
@@ -173,7 +200,10 @@ advisories := [
 		"id": "CGP-grwg-42x8-w9x7",
 		"group": "com.auth0", "artifact": "java-jwt",
 		"cvss": 4.0, "cwe": "CWE-125",
-		"title": "ECDSAAlgorithm.countPadding reads one byte past the array end when the S-half of a JOSE signature is all zeros, causing ",
+		"title": concat("", [
+			"ECDSAAlgorithm.countPadding reads one byte past the array end when the S-half of a JOSE signature is all ",
+			"zeros, causing ",
+		]),
 		"open_from": "",
 		"versions": {
 			"3.0.1", "3.0.2", "3.1.0", "3.2.0", "3.3.0", "3.4.0", "3.4.1", "3.5.0", "3.6.0", "3.7.0", "3.8.0",
@@ -186,7 +216,10 @@ advisories := [
 		"id": "CGP-pqgh-898g-975x",
 		"group": "org.mock-server", "artifact": "mockserver-core",
 		"cvss": 9.3, "cwe": "CWE-611",
-		"title": "XmlSchemaValidator explicitly sets ACCESS_EXTERNAL_DTD and ACCESS_EXTERNAL_SCHEMA to 'all', enabling XXE and SSRF via bo",
+		"title": concat("", [
+			"XmlSchemaValidator explicitly sets ACCESS_EXTERNAL_DTD and ACCESS_EXTERNAL_SCHEMA to 'all', enabling XXE and ",
+			"SSRF via bo",
+		]),
 		"open_from": "",
 		"versions": {
 			"5.5.4", "5.6.0", "5.6.1", "5.7.0", "5.7.1", "5.7.2", "5.8.0", "5.8.1", "5.9.0", "5.10", "5.10.0",
@@ -197,7 +230,10 @@ advisories := [
 		"id": "CGP-qfvj-qrwj-6c8w",
 		"group": "io.jsonwebtoken", "artifact": "jjwt-impl",
 		"cvss": 6.7, "cwe": "CWE-347",
-		"title": "DefaultJwtParser.parse(String) skips all signature verification when the JWT signature segment is empty, bypassing confi",
+		"title": concat("", [
+			"DefaultJwtParser.parse(String) skips all signature verification when the JWT signature segment is empty, ",
+			"bypassing confi",
+		]),
 		"open_from": "",
 		"versions": {
 			"0.10.0", "0.10.1", "0.10.2", "0.10.3", "0.10.4", "0.10.5", "0.10.6", "0.10.7", "0.10.8", "0.11.0",
@@ -316,7 +352,11 @@ sbom_hits contains msg if {
 # ===========================================================================
 tracked_ids := {adv.id | some adv in active_advisories} | extra_osv_ids
 
-record_ids(v) := ({v.id} | {a | some a in as_list(object.get(v, "aliases", []))}) | {u | some u in as_list(object.get(v, "upstream", []))}
+record_aliases(v) := {a | some a in as_list(object.get(v, "aliases", []))}
+
+record_upstream(v) := {u | some u in as_list(object.get(v, "upstream", []))}
+
+record_ids(v) := {v.id} | record_aliases(v) | record_upstream(v)
 
 # Reference input.v0.osv directly so Cloudsmith includes OSV data in the input.
 default osv_records := []
